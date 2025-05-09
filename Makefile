@@ -1,0 +1,37 @@
+NAME = minishell
+
+CC = cc
+CFLAGS = -Wall -Werror -Wextra
+
+RM = rm -f
+
+SRC_DIR = srcs
+OBJ_DIR = objs
+
+SRCS = ${SRC_DIR}/main.c ${SRC_DIR}/lexer.c ${SRC_DIR}/lexing_utils.c ${SRC_DIR}/quotes.c \
+		${SRC_DIR}/frees.c ${SRC_DIR}/lexing_utils2.c
+OBJS = ${SRCS:${SRC_DIR}/%.c=${OBJ_DIR}/%.o}
+
+${OBJ_DIR}/%.o: ${SRC_DIR}/%.c minishell.h
+	@mkdir -p ${dir $@}
+	${CC} ${CFLAGS} -g -c $< -o $@
+
+all: libft ${NAME}
+
+libft:
+	make -C libft
+
+${NAME}: ${OBJS}
+		${CC} ${CFLAGS} ${MAIN_OBJ} ${OBJS} -g -Llibft -lft -lreadline -o ${NAME}
+
+clean:
+		${RM} ${OBJS}
+		rm -rf ${OBJ_DIR}
+		make -C libft fclean
+
+fclean: clean
+		${RM} ${NAME}
+
+re: fclean all
+
+.PHONY: all clean fclean re libft

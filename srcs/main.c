@@ -1,0 +1,47 @@
+#include "../minishell.h"
+
+void	print_tokens(t_token *tokens)
+{
+	while (tokens)
+	{
+		printf("Data: %s\n", tokens->data);
+		printf("Type: %d\n", tokens->type);
+		printf("Quote Type: %d\n", tokens->quote_type);
+		printf("-----\n");
+		tokens = tokens->next;
+	}
+}
+
+int	main(int ac, char **av, char **env)
+{
+	char		*command;
+	//t_env_list	*env_lst;
+	static int	status;
+	t_token		*tokens_list;
+
+	(void)av;
+	(void)ac;
+	(void)env;
+	//env_lst = create_env_list(env);
+	//if (!env_lst)
+	//	return (1);
+	while (FOREVER)
+	{
+		command = readline(GREEN"A10-shell"RESET"$ ");
+		if (!command)
+		{
+			rl_clear_history();
+			exit(1);
+		}
+		add_history(command);
+		tokens_list = handle_command(command, &status);
+		if (!tokens_list)
+			printf("exit status: %d\n", status);
+		print_tokens(tokens_list);
+		free(command);
+		//free_tokens(&tokens_list);
+		// if (env_lst)
+		// 	free_env_list(&env_lst);
+	}
+	return (0);
+}
