@@ -26,7 +26,7 @@ int	main(int ac, char **av, char **env)
 		return (1);
 	while (FOREVER)
 	{
-		command = readline(GREEN"A10-shell"RESET"$ ");
+		command = readline(GREEN"minishell42"RESET"$ ");
 		if (!command)
 		{
 			rl_clear_history();
