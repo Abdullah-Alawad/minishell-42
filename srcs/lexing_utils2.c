@@ -7,7 +7,8 @@ int	handle_token(char *command, int *i, t_token **tokens_list)
 
 	ints.start = *i;
 	q_type = quote_type(command[ints.start]);
-	while (command[*i] && command[*i] != ' ' && !is_operator(command[*i]))
+	while (command[*i] && command[*i] != ' ' && !is_operator(command[*i])
+			&& command[*i] != '\'' && command[*i] != '\"')
 		(*i)++;
 	ints.end = *i;
 	if (*i > ints.start)
