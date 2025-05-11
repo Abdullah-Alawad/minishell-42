@@ -82,8 +82,13 @@ int		good_quotes(char *command);
 int		handle_quotes(char *command, int start, t_token **tokens_list);
 t_qtype	quote_type(char q);
 
+// env functions
+t_env_list	*create_env_list(char **env);
+
 // frees functions
 void	free_tokens(t_token **tokens_list);
+void	free_env_list(t_env_list **env);
+void	free_av(char **s);
 
 
 

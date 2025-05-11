@@ -15,16 +15,15 @@ void	print_tokens(t_token *tokens)
 int	main(int ac, char **av, char **env)
 {
 	char		*command;
-	//t_env_list	*env_lst;
+	t_env_list	*env_lst;
 	static int	status;
 	t_token		*tokens_list;
 
 	(void)av;
 	(void)ac;
-	(void)env;
-	//env_lst = create_env_list(env);
-	//if (!env_lst)
-	//	return (1);
+	env_lst = create_env_list(env);
+	if (!env_lst)
+		return (1);
 	while (FOREVER)
 	{
 		command = readline(GREEN"A10-shell"RESET"$ ");
@@ -38,10 +37,11 @@ int	main(int ac, char **av, char **env)
 		if (!tokens_list)
 			printf("exit status: %d\n", status);
 		print_tokens(tokens_list);
+		// frees so far
 		free(command);
-		//free_tokens(&tokens_list);
-		// if (env_lst)
-		// 	free_env_list(&env_lst);
+		free_tokens(&tokens_list);
+		if (env_lst)
+			free_env_list(&env_lst);
 	}
 	return (0);
 }
