@@ -65,6 +65,7 @@ typedef struct s_env_list
 {
 	char				*key;
 	char				*data;
+	int					len;
 	int					exported;
 	struct s_env_list	*next;
 }	t_env_list;

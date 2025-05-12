@@ -24,6 +24,16 @@ int	main(int ac, char **av, char **env)
 	env_lst = create_env_list(env);
 	if (!env_lst)
 		return (1);
+
+	t_env_list	*tmp;
+	tmp = env_lst;
+	while (tmp)
+	{
+		printf("len: %d\n", tmp->len);
+		tmp = tmp->next;
+	}
+	
+
 	while (FOREVER)
 	{
 		command = readline(GREEN"minishell42"RESET"$ ");

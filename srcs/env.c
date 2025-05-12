@@ -42,6 +42,7 @@ t_env_list	*init_env(char *str, int status)
 		env->data = ft_strdup(lst[1]);
 	else
 		env->data = "";
+	env->len = ft_strlen(env->data);
 	env->next = NULL;
 	free_av(lst);
 	return (env);
