@@ -37,11 +37,11 @@ t_env_list	*init_env(char *str, int status)
 	if (lst[0])
 		env->key = ft_strdup(lst[0]);
 	else
-		env->key = "";
+		env->key = ft_strdup("");
 	if (lst[1])
 		env->data = ft_strdup(lst[1]);
 	else
-		env->data = "";
+		env->data = ft_strdup("");
 	env->len = ft_strlen(env->data);
 	env->next = NULL;
 	free_av(lst);

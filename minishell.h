@@ -77,11 +77,16 @@ int		handle_token(char *command, int *i, t_token **tokens_list);
 int		is_operator(char c);
 int		check_operator(char *command, int start, t_token **tokens_list);
 
-
 // quotes functions
 int		good_quotes(char *command);
 int		handle_quotes(char *command, int start, t_token **tokens_list);
 t_qtype	quote_type(char q);
+
+// parse functions
+t_command	*parse_tokens(t_token *tokens, t_env_list *env);
+t_command	*cmd_create(void);
+void		cmds_add_back(t_command **cmds_list, t_command *cmd);
+char		**add_new_av(char **new_av, int i, char *data, t_qtype q_type);
 
 // env functions
 t_env_list	*create_env_list(char **env);
@@ -90,6 +95,8 @@ t_env_list	*create_env_list(char **env);
 void	free_tokens(t_token **tokens_list);
 void	free_env_list(t_env_list **env);
 void	free_av(char **s);
+void	free_commands(t_command **cmds);
+void	error_exit(int status, t_token **tokens, t_command **cmds, t_env_list **env);
 
 
 
