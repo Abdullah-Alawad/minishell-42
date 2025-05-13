@@ -86,10 +86,13 @@ t_qtype	quote_type(char q);
 t_command	*parse_tokens(t_token *tokens, t_env_list *env);
 t_command	*cmd_create(void);
 void		cmds_add_back(t_command **cmds_list, t_command *cmd);
-char		**add_new_av(char **new_av, int i, char *data, t_qtype q_type);
+int			copy_av(t_command *cmd, char **new_av, int *i);
 
 // env functions
 t_env_list	*create_env_list(char **env);
+
+// expander functions
+char		*expander(char *data, t_env_list *env);
 
 // frees functions
 void	free_tokens(t_token **tokens_list);

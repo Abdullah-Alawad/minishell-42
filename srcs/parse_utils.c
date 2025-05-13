@@ -1,19 +1,22 @@
 #include "../minishell.h"
 
-char	**add_new_av(char **new_av, int i, char *data, t_qtype q_type)
+int	copy_av(t_command *cmd, char **new_av, int *i)
 {
-	if ((q_type == NO_Q || q_type == DOUBLE_Q) && ft_strchr(data, '$'))
-		new_av[i] = ft_strdup("expand string"); // Expander function HERE
-	else
-		new_av[i] = ft_strdup(data);
-	if (!new_av[i])
+	*i = 0;
+	while (cmd->av && cmd->av[*i])
 	{
-		free_av(new_av);
-		return (NULL);
+		new_av[*i] = ft_strdup(cmd->av[*i]);
+		if (!new_av[*i])
+		{
+			free_av(new_av);
+			return (0);
+		}
+		(*i)++;
 	}
-	new_av[i + 1] = NULL;
-	return (new_av);
+	free_av(cmd->av);
+	return (1);
 }
+
 
 t_command	*cmd_create(void)
 {

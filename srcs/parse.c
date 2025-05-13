@@ -43,7 +43,7 @@ int	check_builtin(char *s)
 	return (0);
 }
 
-int	set_av(t_command *cmd, char *data, t_qtype q_type)
+int	set_av(t_command *cmd, char *data, t_qtype q_type, t_env_list *env)
 {
 	char	**new_av;
 	int		i;
@@ -54,24 +54,23 @@ int	set_av(t_command *cmd, char *data, t_qtype q_type)
 	new_av = malloc(sizeof(char *) * (i + 2));
 	if (!new_av)
 		return (0);
-	i = 0;
-	while (cmd->av && cmd->av[i])
-	{
-		new_av[i] = ft_strdup(cmd->av[i]);
-		if (!new_av[i++])
-		{
-			free_av(new_av);
-			return (0);
-		}
-	}
-	free_av(cmd->av);
-	cmd->av = add_new_av(new_av, i, data, q_type);
-	if (!cmd->av)
+	if (!copy_av(cmd, new_av, &i))
 		return (0);
+	if ((q_type == NO_Q || q_type == DOUBLE_Q) && ft_strchr(data, '$'))
+		new_av[i] = expander(data, env); // Expander function HERE
+	else
+		new_av[i] = ft_strdup(data);
+	if (!new_av[i])
+	{
+		free_av(new_av);
+		return (0);
+	}
+	new_av[i + 1] = NULL;
+	cmd->av = new_av;
 	return (1);
 }
 
-int	process_token(t_command **new_cmd, t_command **cmds, t_token *tokens)
+int	process_token(t_command **new_cmd, t_command **cmds, t_token *tokens, t_env_list *env)
 {
 	t_command	*cmd;
 	int			i;
@@ -89,7 +88,7 @@ int	process_token(t_command **new_cmd, t_command **cmds, t_token *tokens)
 	}
 	else if (tokens->type == T_DATA)
 	{
-		i = set_av((*new_cmd), tokens->data, tokens->quote_type);
+		i = set_av((*new_cmd), tokens->data, tokens->quote_type, env);
 		(*new_cmd)->is_builtin = check_builtin((*new_cmd)->av[0]);
 	}
 	else
@@ -111,7 +110,7 @@ t_command	*parse_tokens(t_token *tokens, t_env_list *env)
 	cmds_add_back(&cmds, new_cmd);
 	while (tmp_tokens)
 	{
-		if (!process_token(&new_cmd, &cmds, tmp_tokens))
+		if (!process_token(&new_cmd, &cmds, tmp_tokens, env))
 			error_exit(1, &tokens, &cmds, &env);
 		tmp_tokens = tmp_tokens->next;
 	}
