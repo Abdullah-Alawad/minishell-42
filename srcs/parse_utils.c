@@ -18,7 +18,7 @@ int	copy_av(t_command *cmd, char **new_av, int *i)
 }
 
 
-t_command	*cmd_create(void)
+t_command	*cmd_create(int status)
 {
 	t_command	*cmd;
 
@@ -35,6 +35,7 @@ t_command	*cmd_create(void)
 	cmd->heredoc = 0;
 	cmd->append = 0;
 	cmd->is_builtin = 0;
+	cmd->status = status;
 	cmd->next = NULL;
 	return (cmd);
 }

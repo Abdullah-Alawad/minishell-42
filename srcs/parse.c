@@ -57,7 +57,7 @@ int	set_av(t_command *cmd, char *data, t_qtype q_type, t_env_list *env)
 	if (!copy_av(cmd, new_av, &i))
 		return (0);
 	if ((q_type == NO_Q || q_type == DOUBLE_Q) && ft_strchr(data, '$'))
-		new_av[i] = expander(data, env); // Expander function HERE
+		new_av[i] = expander(data, env, cmd->status); // Expander function HERE
 	else
 		new_av[i] = ft_strdup(data);
 	if (!new_av[i])
@@ -79,7 +79,7 @@ int	process_token(t_command **new_cmd, t_command **cmds, t_token *tokens, t_env_
 	if (tokens->type == T_PIPE)
 	{
 		(*new_cmd)->pipe = 1;
-		cmd = cmd_create();
+		cmd = cmd_create((*new_cmd)->status);
 		if (!cmd)
 			return (0);
 		(*new_cmd) = cmd;
@@ -96,7 +96,7 @@ int	process_token(t_command **new_cmd, t_command **cmds, t_token *tokens, t_env_
 	return (i);
 }
 
-t_command	*parse_tokens(t_token *tokens, t_env_list *env)
+t_command	*parse_tokens(t_token *tokens, t_env_list *env, int *status)
 {
 	t_token		*tmp_tokens;
 	t_command	*cmds;
@@ -104,7 +104,7 @@ t_command	*parse_tokens(t_token *tokens, t_env_list *env)
 
 	cmds = NULL;
 	tmp_tokens = tokens;
-	new_cmd = cmd_create();
+	new_cmd = cmd_create(*status);
 	if (!new_cmd)
 		error_exit(1, &tokens, &cmds, &env);
 	cmds_add_back(&cmds, new_cmd);

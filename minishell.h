@@ -40,7 +40,6 @@ typedef struct	s_ints
 	int	end;
 }	t_ints;
 
-
 typedef struct s_token
 {
 	char			*data;
@@ -58,6 +57,7 @@ typedef struct s_command
 	int					heredoc;
 	int					append;
 	int					is_builtin;
+	int					status;
 	struct s_command	*next;
 }	t_command;	
 
@@ -83,8 +83,8 @@ int		handle_quotes(char *command, int start, t_token **tokens_list);
 t_qtype	quote_type(char q);
 
 // parse functions
-t_command	*parse_tokens(t_token *tokens, t_env_list *env);
-t_command	*cmd_create(void);
+t_command	*parse_tokens(t_token *tokens, t_env_list *env, int *status);
+t_command	*cmd_create(int status);
 void		cmds_add_back(t_command **cmds_list, t_command *cmd);
 int			copy_av(t_command *cmd, char **new_av, int *i);
 
@@ -92,7 +92,7 @@ int			copy_av(t_command *cmd, char **new_av, int *i);
 t_env_list	*create_env_list(char **env);
 
 // expander functions
-char		*expander(char *data, t_env_list *env);
+char	*expander(char *data, t_env_list *env, int status);
 
 // frees functions
 void	free_tokens(t_token **tokens_list);
