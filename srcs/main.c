@@ -66,6 +66,7 @@ int	main(int ac, char **av, char **env)
 			printf("exit status: %d\n", status);
 		status = 7;
 		cmds_list = parse_tokens(tokens_list, env_lst, &status);
+		execute_command(cmds_list, command, &status, &env);
 		// frees so far
 		free(command);
 		free_tokens(&tokens_list);

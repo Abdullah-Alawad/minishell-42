@@ -94,6 +94,12 @@ t_env_list	*create_env_list(char **env);
 // expander functions
 char	*expander(char *data, t_env_list *env, int status);
 
+// execution function
+void	execute_command(t_command *cmd_list, char *command, int *status, t_env_list **env);
+
+// builtin commands functions
+
+
 // frees functions
 void	free_tokens(t_token **tokens_list);
 void	free_env_list(t_env_list **env);
