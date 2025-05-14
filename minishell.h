@@ -40,7 +40,6 @@ typedef struct	s_ints
 	int	end;
 }	t_ints;
 
-
 typedef struct s_token
 {
 	char			*data;
@@ -58,6 +57,7 @@ typedef struct s_command
 	int					heredoc;
 	int					append;
 	int					is_builtin;
+	int					status;
 	struct s_command	*next;
 }	t_command;	
 
@@ -65,6 +65,7 @@ typedef struct s_env_list
 {
 	char				*key;
 	char				*data;
+	int					len;
 	int					exported;
 	struct s_env_list	*next;
 }	t_env_list;
@@ -76,19 +77,29 @@ int		handle_token(char *command, int *i, t_token **tokens_list);
 int		is_operator(char c);
 int		check_operator(char *command, int start, t_token **tokens_list);
 
-
 // quotes functions
 int		good_quotes(char *command);
 int		handle_quotes(char *command, int start, t_token **tokens_list);
 t_qtype	quote_type(char q);
 
+// parse functions
+t_command	*parse_tokens(t_token *tokens, t_env_list *env, int *status);
+t_command	*cmd_create(int status);
+void		cmds_add_back(t_command **cmds_list, t_command *cmd);
+int			copy_av(t_command *cmd, char **new_av, int *i);
+
 // env functions
 t_env_list	*create_env_list(char **env);
+
+// expander functions
+char	*expander(char *data, t_env_list *env, int status);
 
 // frees functions
 void	free_tokens(t_token **tokens_list);
 void	free_env_list(t_env_list **env);
 void	free_av(char **s);
+void	free_commands(t_command **cmds);
+void	error_exit(int status, t_token **tokens, t_command **cmds, t_env_list **env);
 
 
 

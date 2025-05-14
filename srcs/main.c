@@ -1,5 +1,32 @@
 #include "../minishell.h"
 
+void	print_command_list(t_command *cmd)
+{
+	int i;
+
+	while (cmd)
+	{
+		printf("Arguments:\n");
+		if (cmd->av)
+		{
+			i = 0;
+			while (cmd->av[i])
+			{
+				printf("  av[%d]: %s\n", i, cmd->av[i]);
+				i++;
+			}
+		}
+		printf("Input File: %s\n", cmd->in_file ? cmd->in_file : "NULL");
+		printf("Output File: %s\n", cmd->out_file ? cmd->out_file : "NULL");
+		printf("Pipe: %d\n", cmd->pipe);
+		printf("Heredoc: %d\n", cmd->heredoc);
+		printf("Append: %d\n", cmd->append);
+		printf("Is Builtin: %d\n", cmd->is_builtin);
+		printf("----------------------\n");
+		cmd = cmd->next;
+	}
+}
+
 void	print_tokens(t_token *tokens)
 {
 	while (tokens)
@@ -18,6 +45,7 @@ int	main(int ac, char **av, char **env)
 	t_env_list	*env_lst;
 	static int	status;
 	t_token		*tokens_list;
+	t_command	*cmds_list;
 
 	(void)av;
 	(void)ac;
@@ -36,10 +64,12 @@ int	main(int ac, char **av, char **env)
 		tokens_list = handle_command(command, &status);
 		if (!tokens_list)
 			printf("exit status: %d\n", status);
-		print_tokens(tokens_list);
+		status = 7;
+		cmds_list = parse_tokens(tokens_list, env_lst, &status);
 		// frees so far
 		free(command);
 		free_tokens(&tokens_list);
+		free_commands(&cmds_list);
 		if (env_lst)
 			free_env_list(&env_lst);
 	}
