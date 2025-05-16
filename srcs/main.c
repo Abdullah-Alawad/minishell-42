@@ -66,13 +66,13 @@ int	main(int ac, char **av, char **env)
 			printf("exit status: %d\n", status);
 		status = 7;
 		cmds_list = parse_tokens(tokens_list, env_lst, &status);
-		execute_command(cmds_list, command, &status, &env);
+		execute_command(cmds_list, command, &status, &env_lst);
 		// frees so far
 		free(command);
 		free_tokens(&tokens_list);
 		free_commands(&cmds_list);
-		if (env_lst)
-			free_env_list(&env_lst);
+		// if (env_lst)
+		// 	free_env_list(&env_lst);
 	}
 	return (0);
 }
