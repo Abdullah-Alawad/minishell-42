@@ -106,6 +106,7 @@ int			handle_export(t_command *cmd, t_env_list **env);
 t_env_list	*init_special_env(char *str, int status);
 void		print_export(t_env_list **env);
 int			ft_strchr_i(const char *s, int c);
+int			handle_unset(t_command *cmd, t_env_list **env);
 
 // frees functions
 void		free_tokens(t_token **tokens_list);

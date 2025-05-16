@@ -17,8 +17,8 @@ int	execute_builtin(t_command *cmd, char *command, int status, t_env_list **env)
 	// 	status = handle_exit(env, cmd, status);
 	else if (ft_strncmp("export", cmd->av[0], ft_strlen(cmd->av[0])) == 0)
 		status = handle_export(cmd, env);
-	// else if (ft_strncmp("unset", cmd->av[0], ft_strlen(cmd->av[0])) == 0)
-	// 	status = handle_unset(cmd->av, env);
+	else if (ft_strncmp("unset", cmd->av[0], ft_strlen(cmd->av[0])) == 0)
+		status = handle_unset(cmd, env);
 	return (status);
 }
 
