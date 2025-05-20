@@ -19,8 +19,6 @@ void	free_av(char **s)
 {
 	int		len;
 
-	if (!s || !*s)
-		return ;
 	len = 0;
 	while (s[len])
 	{

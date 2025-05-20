@@ -11,7 +11,8 @@ OBJ_DIR = objs
 SRCS = ${SRC_DIR}/main.c ${SRC_DIR}/lexer.c ${SRC_DIR}/lexing_utils.c ${SRC_DIR}/quotes.c \
 		${SRC_DIR}/frees.c ${SRC_DIR}/lexing_utils2.c ${SRC_DIR}/env.c ${SRC_DIR}/parse.c \
 		${SRC_DIR}/parse_utils.c ${SRC_DIR}/expander.c ${SRC_DIR}/execution.c ${SRC_DIR}/env_command.c \
-		${SRC_DIR}/export.c ${SRC_DIR}/export_utils.c ${SRC_DIR}/unset.c
+		${SRC_DIR}/export.c ${SRC_DIR}/export_utils.c ${SRC_DIR}/unset.c ${SRC_DIR}/cd.c \
+		${SRC_DIR}/cd_utils.c ${SRC_DIR}/exit.c
 OBJS = ${SRCS:${SRC_DIR}/%.c=${OBJ_DIR}/%.o}
 
 ${OBJ_DIR}/%.o: ${SRC_DIR}/%.c minishell.h

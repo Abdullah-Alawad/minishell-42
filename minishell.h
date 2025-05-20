@@ -107,6 +107,12 @@ t_env_list	*init_special_env(char *str, int status);
 void		print_export(t_env_list **env);
 int			ft_strchr_i(const char *s, int c);
 int			handle_unset(t_command *cmd, t_env_list **env);
+int			handle_cd(char **cmd, t_env_list **env);
+int			count_av(char **str);
+char		*get_home_path(t_env_list **env);
+int			handle_exit(t_env_list **env, t_command **cmd, int status);
+void		update_pwd_data(t_env_list *pwd, t_env_list *old_pwd);
+void		handle_oldpwd(t_env_list **env, t_env_list **old_pwd);
 
 // frees functions
 void		free_tokens(t_token **tokens_list);
