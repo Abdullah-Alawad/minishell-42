@@ -19,7 +19,7 @@ void	env_add_back(t_env_list **lst, t_env_list *env)
 		(env_last(*lst))->next = env;
 }
 
-t_env_list	*init_env(char *str, int status)
+t_env_list	*init_env(char *str, int status) //needs protection here
 {
 	t_env_list	*env;
 	char		**lst;
