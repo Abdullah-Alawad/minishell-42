@@ -16,6 +16,16 @@ void	print_command_list(t_command *cmd)
 				i++;
 			}
 		}
+		printf("here doc:\n");
+		if (cmd->here_arr)
+		{
+			i = 0;
+			while (cmd->here_arr[i])
+			{
+				printf("  av[%d]: %s\n", i, cmd->here_arr[i]);
+				i++;
+			}
+		}
 		printf("Input File: %s\n", cmd->in_file ? cmd->in_file : "NULL");
 		printf("Output File: %s\n", cmd->out_file ? cmd->out_file : "NULL");
 		printf("Pipe: %d\n", cmd->pipe);
@@ -66,6 +76,7 @@ int	main(int ac, char **av, char **env)
 			printf("exit status: %d\n", status);
 		status = 7;
 		cmds_list = parse_tokens(tokens_list, env_lst, &status);
+		//print_command_list(cmds_list);
 		execute_command(cmds_list, command, &status, &env_lst);
 		// frees so far
 		free(command);

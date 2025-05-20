@@ -62,6 +62,8 @@ void	free_commands(t_command **cmds)
 			free((*cmds)->out_file);
 		if ((*cmds)->av)
 			free_av((*cmds)->av);
+		if ((*cmds)->here_arr)	
+			free_av((*cmds)->here_arr);
 		free(*cmds);
 		*cmds = tmp;
 	}

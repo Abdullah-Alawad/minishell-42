@@ -2,13 +2,17 @@
 
 int	set_operator(t_command *cmd, t_token *tokens)
 {
-	if (tokens->type == T_REDIRECT_IN || tokens->type == T_HEREDOC)
+	if (tokens->type == T_REDIRECT_IN)
 	{
 		cmd->in_file = ft_strdup(tokens->next->data);
 		if (!cmd->in_file)
 			return (0);
-		if (tokens->type == T_HEREDOC)
-			cmd->heredoc = 1;
+	}
+	else if (tokens->type == T_HEREDOC)
+	{
+		if (!set_here_arr(cmd, tokens->next->data))
+			return (0);
+		cmd->heredoc = 1;
 	}
 	else if (tokens->type == T_REDIRECT_OUT || tokens->type == T_APPEND)
 	{
@@ -70,7 +74,8 @@ int	set_av(t_command *cmd, char *data, t_qtype q_type, t_env_list *env)
 	return (1);
 }
 
-int	process_token(t_command **new_cmd, t_command **cmds, t_token *tokens, t_env_list *env)
+int	process_token(t_command **new_cmd, t_command **cmds,
+			t_token *tokens, t_env_list *env)
 {
 	t_command	*cmd;
 	int			i;
@@ -92,7 +97,10 @@ int	process_token(t_command **new_cmd, t_command **cmds, t_token *tokens, t_env_
 		(*new_cmd)->is_builtin = check_builtin((*new_cmd)->av[0]);
 	}
 	else
+	{
 		i = set_operator((*new_cmd), tokens);
+		tokens = tokens->next;
+	}
 	return (i);
 }
 
@@ -112,7 +120,10 @@ t_command	*parse_tokens(t_token *tokens, t_env_list *env, int *status)
 	{
 		if (!process_token(&new_cmd, &cmds, tmp_tokens, env))
 			error_exit(1, &tokens, &cmds, &env);
-		tmp_tokens = tmp_tokens->next;
+		if (tmp_tokens->type != T_DATA && tmp_tokens->type != T_PIPE)
+			tmp_tokens = tmp_tokens->next->next;
+		else
+			tmp_tokens = tmp_tokens->next;
 	}
 	return (cmds);
 }
