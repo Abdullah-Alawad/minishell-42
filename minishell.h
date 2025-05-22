@@ -34,7 +34,7 @@ typedef enum e_qtype
 	DOUBLE_Q,
 }	t_qtype;
 
-typedef struct	s_ints	
+typedef struct	s_ints
 {
 	int	start;
 	int	end;
@@ -44,23 +44,8 @@ typedef struct s_token
 {
 	char			*data;
 	t_ttype			type;
-	t_qtype			quote_type;
 	struct s_token	*next;
 }	t_token;
-
-typedef struct s_command
-{
-	char				**av;
-	char				**here_arr;
-	char				*in_file;
-	char				*out_file;
-	int					pipe;
-	int					heredoc;
-	int					append;
-	int					is_builtin;
-	int					status;
-	struct s_command	*next;
-}	t_command;	
 
 typedef struct s_env_list
 {
@@ -71,57 +56,76 @@ typedef struct s_env_list
 	struct s_env_list	*next;
 }	t_env_list;
 
+typedef struct s_expand //add by abeer
+{
+	t_env_list	*env_lst;
+	char		*result;
+	char		type;
+	char		*var_name;
+	char		*value;
+	int			i;
+	int			start;
+	int			status;
+	char		**args;
+}	t_expand;
+
+
+typedef struct s_command
+{
+	char				**av;
+	char				*in_file;
+	char				*out_file;
+	int					pipe;
+	int					heredoc;
+	int					append;
+	int					is_builtin;
+	int					status;
+	char				**args;
+	struct s_command	*next;
+}	t_command;
+
 // lexer functions
-t_token		*handle_command(char *command, int *status);
-int			add_to_list(char *command, t_ints ints, t_token **tokens_list, t_qtype q_type);
-int			handle_token(char *command, int *i, t_token **tokens_list);
-int			is_operator(char c);
-int			check_operator(char *command, int start, t_token **tokens_list);
+t_token	*handle_command(char *command, int *status);
+int		add_to_list(char *command, t_ints ints, t_token **tokens_list);
+int		handle_token(char *command, int *i, t_token **tokens_list);
+int		is_operator(char c);
+int		check_operator(char *command, int start, t_token **tokens_list);
 
 // quotes functions
-int			good_quotes(char *command);
-int			handle_quotes(char *command, int start, t_token **tokens_list);
-t_qtype		quote_type(char q);
+int		good_quotes(char *command);
+int		handle_quotes(char *command, int start, t_token **tokens_list);
+t_qtype	quote_type(char q);
 
 // parse functions
 t_command	*parse_tokens(t_token *tokens, t_env_list *env, int *status);
 t_command	*cmd_create(int status);
 void		cmds_add_back(t_command **cmds_list, t_command *cmd);
 int			copy_av(t_command *cmd, char **new_av, int *i);
-int			set_here_arr(t_command *cmd, char *del);
 
 // env functions
 t_env_list	*create_env_list(char **env);
-t_env_list	*init_env(char *str, int status);
-void		env_add_back(t_env_list **lst, t_env_list *env);
 
-
-// expander functions
-char		*expander(char *data, t_env_list *env, int status);
-
-// execution function
-void		execute_command(t_command *cmd_list, char *command, int *status, t_env_list **env);
-
-// builtin commands functions
-int			handle_env(t_env_list **env);
-int			handle_export(t_command *cmd, t_env_list **env);
-t_env_list	*init_special_env(char *str, int status);
-void		print_export(t_env_list **env);
-int			ft_strchr_i(const char *s, int c);
-int			handle_unset(t_command *cmd, t_env_list **env);
-int			handle_cd(char **cmd, t_env_list **env);
-int			count_av(char **str);
-char		*get_home_path(t_env_list **env);
-int			handle_exit(t_env_list **env, t_command **cmd, int status);
-void		update_pwd_data(t_env_list *pwd, t_env_list *old_pwd);
-void		handle_oldpwd(t_env_list **env, t_env_list **old_pwd);
+// expander functions //abeer
+void	expand_braced_variable(char *data, t_expand *ex);
+void	expand_status_variable(t_expand *ex);
+void	expand_positional_parameter(char *data, t_expand *ex);
+void	expand_named_variable(char *data, t_expand *ex);
+void	handle_dollar(char *data, t_expand *ex);
+char	*ft_strjoin_and_free(char *s1, char *s2);
+char	*get_positional_value(char *num_str, char **args);
+char	*get_env_value(char *var_name, t_env_list *env);
+void	append_char_to_result(char *data, t_expand *ex);
+void	handel_s_q(char *data, t_expand *ex);
+void	handel_d_q(char *data, t_expand *ex);
+void	do_expand(char *data, t_expand *ex);
+char	*expander(char *data, t_env_list *env_lst, int status, char **args);
 
 // frees functions
-void		free_tokens(t_token **tokens_list);
-void		free_env_list(t_env_list **env);
-void		free_av(char **s);
-void		free_commands(t_command **cmds);
-void		error_exit(int status, t_token **tokens, t_command **cmds, t_env_list **env);
+void	free_tokens(t_token **tokens_list);
+void	free_env_list(t_env_list **env);
+void	free_av(char **s);
+void	free_commands(t_command **cmds);
+void	error_exit(int status, t_token **tokens, t_command **cmds, t_env_list **env);
 
 
 

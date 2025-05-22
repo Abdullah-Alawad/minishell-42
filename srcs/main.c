@@ -16,16 +16,6 @@ void	print_command_list(t_command *cmd)
 				i++;
 			}
 		}
-		printf("here doc:\n");
-		if (cmd->here_arr)
-		{
-			i = 0;
-			while (cmd->here_arr[i])
-			{
-				printf("  av[%d]: %s\n", i, cmd->here_arr[i]);
-				i++;
-			}
-		}
 		printf("Input File: %s\n", cmd->in_file ? cmd->in_file : "NULL");
 		printf("Output File: %s\n", cmd->out_file ? cmd->out_file : "NULL");
 		printf("Pipe: %d\n", cmd->pipe);
@@ -43,7 +33,6 @@ void	print_tokens(t_token *tokens)
 	{
 		printf("Data: %s\n", tokens->data);
 		printf("Type: %d\n", tokens->type);
-		printf("Quote Type: %d\n", tokens->quote_type);
 		printf("-----\n");
 		tokens = tokens->next;
 	}
@@ -57,33 +46,34 @@ int	main(int ac, char **av, char **env)
 	t_token		*tokens_list;
 	t_command	*cmds_list;
 
-	(void)av;
 	(void)ac;
 	env_lst = create_env_list(env);
 	if (!env_lst)
 		return (1);
 	while (FOREVER)
 	{
-		command = readline(GREEN"minishell42"RESET"$ ");
-		if (!command)
+		char	*raw = readline(GREEN"minishell42"RESET"$ ");
+		if (!raw)
 		{
 			rl_clear_history();
 			exit(1);
 		}
-		add_history(command);
+		add_history(raw);
+		command = expander(raw, env_lst, status, av);
+		free(raw);
+		printf("Expanded result: %s\n", command);
 		tokens_list = handle_command(command, &status);
 		if (!tokens_list)
 			printf("exit status: %d\n", status);
 		status = 7;
 		cmds_list = parse_tokens(tokens_list, env_lst, &status);
-		//print_command_list(cmds_list);
-		execute_command(cmds_list, command, &status, &env_lst);
-		// frees so far
+		print_command_list(cmds_list);
+		//free_commands(&cmds_list);
+
 		free(command);
 		free_tokens(&tokens_list);
-		free_commands(&cmds_list);
-		// if (env_lst)
-		// 	free_env_list(&env_lst);
 	}
+	if (env_lst)
+		free_env_list(&env_lst);
 	return (0);
 }
