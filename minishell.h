@@ -44,7 +44,6 @@ typedef struct s_token
 {
 	char			*data;
 	t_ttype			type;
-	t_qtype			quote_type;
 	struct s_token	*next;
 }	t_token;
 
@@ -87,7 +86,7 @@ typedef struct s_command
 
 // lexer functions
 t_token	*handle_command(char *command, int *status);
-int		add_to_list(char *command, t_ints ints, t_token **tokens_list, t_qtype q_type);
+int		add_to_list(char *command, t_ints ints, t_token **tokens_list);
 int		handle_token(char *command, int *i, t_token **tokens_list);
 int		is_operator(char c);
 int		check_operator(char *command, int start, t_token **tokens_list);

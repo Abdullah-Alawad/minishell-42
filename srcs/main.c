@@ -33,7 +33,6 @@ void	print_tokens(t_token *tokens)
 	{
 		printf("Data: %s\n", tokens->data);
 		printf("Type: %d\n", tokens->type);
-		printf("Quote Type: %d\n", tokens->quote_type);
 		printf("-----\n");
 		tokens = tokens->next;
 	}
@@ -66,17 +65,15 @@ int	main(int ac, char **av, char **env)
 		tokens_list = handle_command(command, &status);
 		if (!tokens_list)
 			printf("exit status: %d\n", status);
-		else
-		{
-			status = 7;
-			cmds_list = parse_tokens(tokens_list, env_lst, &status);
-			free_commands(&cmds_list);
-		}
+		status = 7;
+		cmds_list = parse_tokens(tokens_list, env_lst, &status);
+		print_command_list(cmds_list);
+		//free_commands(&cmds_list);
 
 		free(command);
 		free_tokens(&tokens_list);
 	}
-		if (env_lst)
-			free_env_list(&env_lst);
+	if (env_lst)
+		free_env_list(&env_lst);
 	return (0);
 }

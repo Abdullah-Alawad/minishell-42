@@ -17,7 +17,7 @@ t_ttype	token_type(char *data)
 	return (T_DATA);
 }
 
-t_token	*new_token(char	*data, t_ttype t_type, t_qtype q_type)
+t_token	*new_token(char	*data, t_ttype t_type)
 {
 	t_token	*token;
 
@@ -26,7 +26,6 @@ t_token	*new_token(char	*data, t_ttype t_type, t_qtype q_type)
 		return (NULL);
 	token->data = data;
 	token->type = t_type;
-	token->quote_type = q_type;
 	token->next = NULL;
 	return (token);
 }
@@ -50,8 +49,7 @@ void	tokens_add_back(t_token **tokens_list, t_token *token)
 		(tokens_last(*tokens_list))->next = token;
 }
 
-int	add_to_list(char *command, t_ints ints,
-				t_token **tokens_list, t_qtype q_type)
+int	add_to_list(char *command, t_ints ints, t_token **tokens_list)
 {
 	t_token	*token;
 	char	*data;
@@ -64,7 +62,7 @@ int	add_to_list(char *command, t_ints ints,
 		return (0);
 	}
 	t_type = token_type(data);
-	token = new_token(data, t_type, q_type);
+	token = new_token(data, t_type);
 	if (!token)
 	{
 		free(data);
