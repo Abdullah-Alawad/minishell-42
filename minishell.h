@@ -75,6 +75,7 @@ typedef struct s_command
 	char				**av;
 	char				*in_file;
 	char				*out_file;
+	char				**here_arr;
 	int					pipe;
 	int					heredoc;
 	int					append;
@@ -101,9 +102,13 @@ t_command	*parse_tokens(t_token *tokens, t_env_list *env, int *status);
 t_command	*cmd_create(int status);
 void		cmds_add_back(t_command **cmds_list, t_command *cmd);
 int			copy_av(t_command *cmd, char **new_av, int *i);
+int			set_here_arr(t_command *cmd, char *del);
+
 
 // env functions
 t_env_list	*create_env_list(char **env);
+t_env_list	*init_env(char *str, int status);
+void		env_add_back(t_env_list **lst, t_env_list *env);
 
 // expander functions //abeer
 void	expand_braced_variable(char *data, t_expand *ex);
@@ -119,6 +124,25 @@ void	handel_s_q(char *data, t_expand *ex);
 void	handel_d_q(char *data, t_expand *ex);
 void	do_expand(char *data, t_expand *ex);
 char	*expander(char *data, t_env_list *env_lst, int status, char **args);
+
+// execution function
+void		execute_command(t_command *cmd_list, char *command, int *status, t_env_list **env);
+
+// builtin commands functions
+int			handle_env(t_env_list **env);
+int			handle_export(t_command *cmd, t_env_list **env);
+t_env_list	*init_special_env(char *str, int status);
+void		print_export(t_env_list **env);
+int			ft_strchr_i(const char *s, int c);
+int			handle_unset(t_command *cmd, t_env_list **env);
+int			handle_cd(char **cmd, t_env_list **env);
+int			count_av(char **str);
+char		*get_home_path(t_env_list **env);
+int			handle_exit(t_env_list **env, t_command **cmd, int status);
+void		update_pwd_data(t_env_list *pwd, t_env_list *old_pwd);
+void		handle_oldpwd(t_env_list **env, t_env_list **old_pwd);
+int 		handle_echo(char **cmd);
+
 
 // frees functions
 void	free_tokens(t_token **tokens_list);
