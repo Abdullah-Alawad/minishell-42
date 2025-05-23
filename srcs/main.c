@@ -72,7 +72,7 @@ int	main(int ac, char **av, char **env)
 		add_history(command);
 
 		command = expander(command, env_lst, status, av);
-		printf("expanded: %s\n", command);
+		//printf("expanded: %s\n", command);
 		tokens_list = handle_command(command, &status);
 		if (!tokens_list)
 			printf("exit status: %d\n", status);

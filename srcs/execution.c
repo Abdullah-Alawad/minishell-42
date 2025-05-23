@@ -32,7 +32,7 @@ void	execute_command(t_command *cmd_list, char *command, int *status, t_env_list
 		if (cmd-> is_builtin)
 			*status = execute_builtin(cmd, command, *status, env);
 		else
-			printf("external command\n");
+			*status = execute_external(cmd, env);
 		cmd = cmd->next;
 	}
 }

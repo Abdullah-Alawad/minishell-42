@@ -143,6 +143,15 @@ void		update_pwd_data(t_env_list *pwd, t_env_list *old_pwd);
 void		handle_oldpwd(t_env_list **env, t_env_list **old_pwd);
 int 		handle_echo(char **cmd);
 
+// external commands
+int			execute_external(t_command *cmd, t_env_list **env);
+int			add_envs(t_env_list *env, char **envp);
+int			env_len(t_env_list *env);
+char		**env_list_to_array(t_env_list **env);
+void		free_paths(char **paths);
+char		*get_env_path(t_env_list *env);
+int			handle_child_process(t_command *cmd, t_env_list **env, char *path);
+int			handle_parent_process(int pid, char *path);
 
 // frees functions
 void	free_tokens(t_token **tokens_list);
