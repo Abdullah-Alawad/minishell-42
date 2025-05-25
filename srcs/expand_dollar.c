@@ -60,7 +60,12 @@ void	expand_named_variable(char *data, t_expand *ex)
 
 void	handle_dollar(char *data, t_expand *ex)
 {
-	if (data[ex->i] == '{')
+	if (data[ex->i] == ' ' || data[ex->i] == '\0') // for case $ alone
+	{	
+		ex->i--;
+		append_char_to_result(data, ex);
+	}
+	else if (data[ex->i] == '{')
 		expand_braced_variable(data, ex);
 	else if (data[ex->i] == '?')
 		expand_status_variable(ex);
@@ -68,6 +73,9 @@ void	handle_dollar(char *data, t_expand *ex)
 		expand_positional_parameter(data, ex);
 	else if (ft_isalpha(data[ex->i]) || data[ex->i] == '_')
 		expand_named_variable(data, ex);
-	else
+	else										// for "$" case
+	{
+		ex->i--;
 		append_char_to_result(data, ex);
+	}
 }
