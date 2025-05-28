@@ -6,7 +6,7 @@ int	execute_builtin(t_command *cmd, char *command, int status, t_env_list **env)
 	if (!cmd || !cmd->av)
 		return (1);
 	if (ft_strncmp("echo", cmd->av[0], ft_strlen(cmd->av[0])) == 0)
-	    status = handle_echo(cmd->av);
+		status = handle_echo(cmd->av);
 	else if (ft_strncmp("env", cmd->av[0], ft_strlen(cmd->av[0])) == 0)
 		status = handle_env(env);
 	// else if (ft_strncmp("pwd", cmd->av[0], ft_strlen(cmd->av[0])) == 0)
@@ -22,7 +22,8 @@ int	execute_builtin(t_command *cmd, char *command, int status, t_env_list **env)
 	return (status);
 }
 
-void	execute_command(t_command *cmd_list, char *command, int *status, t_env_list **env)
+void	execute_command(t_command *cmd_list, char *command,
+	int *status, t_env_list **env)
 {
 	t_command	*cmd;
 	int			stdin_c;

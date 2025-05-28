@@ -1,37 +1,5 @@
 #include "../minishell.h"
 
-int	open_heredocs(t_command *cmd)
-{
-	int		pipes[2];
-	char	*line;
-	int		i;
-
-	i = 0;
-	while (cmd->here_arr && cmd->here_arr[i])
-	{
-		if (pipe(pipes) == -1)
-			return (perror("pipe"), 1);
-		while (1)
-		{
-			line = readline("> ");
-			if (!line || ft_strncmp(line, cmd->here_arr[i],
-				ft_strlen(cmd->here_arr[i])) == 0)
-				break;
-			write(pipes[1], line, ft_strlen(line));
-			write(pipes[1], "\n", 1);
-			free(line);
-		}
-		free(line);
-		close(pipes[1]);
-		if (cmd->here_arr[i + 1] == NULL)
-			cmd->in_fd = pipes[0];
-		else
-			close(pipes[0]);
-		i++;
-	}
-	return (0);
-}
-
 int	handle_heredoc_redirect(t_command *cmd)
 {
 	if (cmd->heredoc == 1 && cmd->in_fd != -1)
@@ -95,16 +63,4 @@ void	reset_stds(int saved_stdin, int saved_stdout)
 	dup2(saved_stdout, STDOUT_FILENO);
 	close(saved_stdin);
 	close(saved_stdout);
-}
-
-int	need_redirect(t_command *cmd)
-{
-	if (cmd->heredoc == 1)
-		return (1);
-	else if (cmd->append == 1 || cmd->append == 2)
-		return (1);
-	else if (cmd->in_file)
-		return (1);
-	else
-		return (0);
 }
