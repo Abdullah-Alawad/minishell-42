@@ -25,14 +25,28 @@ int	execute_builtin(t_command *cmd, char *command, int status, t_env_list **env)
 void	execute_command(t_command *cmd_list, char *command, int *status, t_env_list **env)
 {
 	t_command	*cmd;
+	int			stdin_c;
+	int			stdout_c;
 
 	cmd = cmd_list;
 	while (cmd)
 	{
-		if (cmd-> is_builtin)
-			*status = execute_builtin(cmd, command, *status, env);
-		else
-			*status = execute_external(cmd, env);
+		if (cmd->heredoc == 1)
+			open_heredocs(cmd);
+		if (need_redirect(cmd))
+		{	
+			stdin_c = dup(STDIN_FILENO);
+			stdout_c = dup(STDOUT_FILENO);
+		}
+		if (!redirect_fds(cmd))
+		{
+			if (cmd-> is_builtin)
+				*status = execute_builtin(cmd, command, *status, env);
+			else
+				*status = execute_external(cmd, env);
+		}
+		if (need_redirect(cmd))
+			reset_stds(stdin_c, stdout_c);
 		cmd = cmd->next;
 	}
 }

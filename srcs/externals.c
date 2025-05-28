@@ -14,20 +14,14 @@ char	*get_cmd_if_direct_path(char *cmd)
 	return (NULL);
 }
 
-char	*check_path(char *full, char *tmp, char *cmd, char **paths)
+char	*check_path(char *full, char *tmp, char *cmd)
 {
 	full = ft_strjoin(tmp, cmd);
 	if (!tmp)
-	{
-		free_paths(paths);
 		return (NULL);
-	}
 	free(tmp);
 	if (access(full, X_OK) == 0)
-	{
-		free_paths(paths);
 		return (full);
-	}
 	free(full);
 	return (NULL);
 }
@@ -42,11 +36,8 @@ char	*find_path(char **paths, char *cmd, char *tmp, int index)
 	{
 		tmp = ft_strjoin(paths[index], "/");
 		if (!tmp)
-		{
-			free_paths(paths);
 			return (NULL);
-		}
-		full = check_path(full, tmp, cmd, paths);
+		full = check_path(full, tmp, cmd);
 		if (full)
 			return (full);
 		index++;
@@ -74,6 +65,7 @@ char	*get_cmd_path(char *cmd, t_env_list **env)
 	if (!paths)
 		return (NULL);
 	full = find_path(paths, cmd, tmp, i);
+	free_paths(paths);
 	return (full);
 }
 

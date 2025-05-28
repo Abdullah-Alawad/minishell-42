@@ -5,6 +5,7 @@
 # include <unistd.h>
 # include <stdlib.h>
 # include <stdio.h>
+# include <fcntl.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <sys/wait.h>
@@ -77,6 +78,8 @@ typedef struct s_command
 	char				*in_file;
 	char				*out_file;
 	char				**here_arr;
+	int					in_fd;
+	int					out_fd;
 	int					pipe;
 	int					heredoc;
 	int					append;
@@ -159,6 +162,13 @@ void		free_paths(char **paths);
 char		*get_env_path(t_env_list *env);
 int			handle_child_process(t_command *cmd, t_env_list **env, char *path);
 int			handle_parent_process(int pid, char *path);
+
+// redirections
+int			open_heredocs(t_command *cmd);
+int			redirect_fds(t_command *cmd);
+void		reset_stds(int saved_stdin, int saved_stdout);
+int			need_redirect(t_command *cmd);
+
 
 // frees functions
 void	free_tokens(t_token **tokens_list);

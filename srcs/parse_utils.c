@@ -75,6 +75,8 @@ t_command	*cmd_create(int status)
 	cmd->here_arr[0] = NULL;
 	cmd->in_file = NULL;
 	cmd->out_file = NULL;
+	cmd->in_fd = -1;
+	cmd->out_fd = -1;
 	cmd->pipe = 0;
 	cmd->heredoc = 0;
 	cmd->append = 0;
