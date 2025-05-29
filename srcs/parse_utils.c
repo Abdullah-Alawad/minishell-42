@@ -86,3 +86,16 @@ t_command	*cmd_create(int status)
 	return (cmd);
 }
 
+int	set_write_operator(t_command *cmd, t_token *tokens)
+{
+	if (cmd->out_file)
+		free(cmd->out_file);
+	cmd->out_file = ft_strdup(tokens->next->data);
+	if (!cmd->out_file)
+		return (0);
+	if (tokens->type == T_APPEND)	
+		cmd->append = 2;
+	else
+		cmd->append = 1;
+	return (1);
+}

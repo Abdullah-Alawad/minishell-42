@@ -16,7 +16,8 @@ int handle_echo(char **cmd)
 	while (cmd[i])
 	{
 		ft_putstr_fd(cmd[i], 1);
-		ft_putchar_fd(' ', 1);
+		if (cmd[i + 1])
+			ft_putchar_fd(' ', 1);
 		i++;
 	}
 	if (new_line)

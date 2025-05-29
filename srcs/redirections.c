@@ -5,7 +5,7 @@ int	handle_heredoc_redirect(t_command *cmd)
 	if (cmd->heredoc == 1 && cmd->in_fd != -1)
 	{
 		if (dup2(cmd->in_fd, STDIN_FILENO) == -1)
-			return (perror("dup2 heredoc"), 1);
+			return (1);
 		close(cmd->in_fd);
 		cmd->in_fd = -1;
 	}
@@ -20,9 +20,9 @@ int	handle_input_redirect(t_command *cmd)
 	{
 		fd = open(cmd->in_file, O_RDONLY);
 		if (fd < 0)
-			return (perror(cmd->in_file), 1);
+			return (1);
 		if (dup2(fd, STDIN_FILENO) == -1)
-			return (perror("dup2 in_file"), 1);
+			return (1);
 		close(fd);
 	}
 	return (0);
@@ -39,9 +39,9 @@ int	handle_output_redirect(t_command *cmd)
 	else
 		return (0);
 	if (fd < 0)
-		return (perror(cmd->out_file), 1);
+		return (1);
 	if (dup2(fd, STDOUT_FILENO) == -1)
-		return (perror("dup2 out_file"), 1);
+		return (1);
 	close(fd);
 	return (0);
 }
