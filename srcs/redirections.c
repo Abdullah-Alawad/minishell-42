@@ -1,0 +1,66 @@
+#include "../minishell.h"
+
+int	handle_heredoc_redirect(t_command *cmd)
+{
+	if (cmd->heredoc == 1 && cmd->in_fd != -1)
+	{
+		if (dup2(cmd->in_fd, STDIN_FILENO) == -1)
+			return (1);
+		close(cmd->in_fd);
+		cmd->in_fd = -1;
+	}
+	return (0);
+}
+
+int	handle_input_redirect(t_command *cmd)
+{
+	int	fd;
+
+	if (cmd->heredoc == 0 && cmd->in_file)
+	{
+		fd = open(cmd->in_file, O_RDONLY);
+		if (fd < 0)
+			return (1);
+		if (dup2(fd, STDIN_FILENO) == -1)
+			return (1);
+		close(fd);
+	}
+	return (0);
+}
+
+int	handle_output_redirect(t_command *cmd)
+{
+	int	fd;
+
+	if (cmd->append == 1 && cmd->out_file)
+		fd = open(cmd->out_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	else if (cmd->append == 2 && cmd->out_file)
+		fd = open(cmd->out_file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	else
+		return (0);
+	if (fd < 0)
+		return (1);
+	if (dup2(fd, STDOUT_FILENO) == -1)
+		return (1);
+	close(fd);
+	return (0);
+}
+
+int	redirect_fds(t_command *cmd)
+{
+	if (handle_heredoc_redirect(cmd))
+		return (1);
+	if (handle_input_redirect(cmd))
+		return (1);
+	if (handle_output_redirect(cmd))
+		return (1);
+	return (0);
+}
+
+void	reset_stds(int saved_stdin, int saved_stdout)
+{
+	dup2(saved_stdin, STDIN_FILENO);
+	dup2(saved_stdout, STDOUT_FILENO);
+	close(saved_stdin);
+	close(saved_stdout);
+}

@@ -4,6 +4,8 @@ int	set_operator(t_command *cmd, t_token *tokens)
 {
 	if (tokens->type == T_REDIRECT_IN)
 	{
+		if (cmd->in_file)
+			free(cmd->in_file);
 		cmd->in_file = ft_strdup(tokens->next->data);
 		if (!cmd->in_file)
 			return (0);
@@ -16,13 +18,8 @@ int	set_operator(t_command *cmd, t_token *tokens)
 	}
 	else if (tokens->type == T_REDIRECT_OUT || tokens->type == T_APPEND)
 	{
-		cmd->out_file = ft_strdup(tokens->next->data);
-		if (!cmd->out_file)
+		if (!set_write_operator(cmd, tokens))
 			return (0);
-		if (tokens->type == T_APPEND)
-			cmd->append = 2;
-		else
-			cmd->append = 1;
 	}
 	return (1);
 }
@@ -36,10 +33,10 @@ int	check_builtin(char *s)
 
 	if (!s || !*s)
 		return (0);
-	len = ft_strlen(s);
 	i = 0;
 	while (b_ins[i])
 	{
+		len = ft_strlen(b_ins[i]);
 		if (!ft_strncmp(s, b_ins[i], len))
 			return (1);
 		i++;
