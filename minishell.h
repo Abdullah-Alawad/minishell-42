@@ -9,6 +9,7 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <sys/wait.h>
+# include <errno.h>
 
 # define FOREVER	1
 # define GREEN		"\033[0;32m"
@@ -164,6 +165,7 @@ void		free_paths(char **paths);
 char		*get_env_path(t_env_list *env);
 int			handle_child_process(t_command *cmd, t_env_list **env, char *path);
 int			handle_parent_process(int pid, char *path);
+char		*get_cmd_path(char *cmd, t_env_list **env);
 
 // redirections
 int			open_heredocs(t_command *cmd);
