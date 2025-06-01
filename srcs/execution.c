@@ -69,74 +69,63 @@ void	handle_no_pipe_cmd(t_command *cmd_list, int *status, t_env_list **env)
 	}
 }
 
+void	handle_child(t_command *cmd, int *status, int *pipes, int prev_fd, t_env_list **env)
+{
+	int	stdin_c;
+	int	stdout_c;
+
+	if (prev_fd != -1)
+		dup2(prev_fd, STDIN_FILENO);
+
+	if (cmd->next)
+		dup2(pipes[1], STDOUT_FILENO);
+	if (prev_fd != -1)
+		close(prev_fd);
+	if (cmd->next)
+	{
+		close(pipes[0]);
+		close(pipes[1]);
+	}
+	if (check_found_command(cmd, status, env) != 127)
+	{	
+		if (need_redirect(cmd))
+		{	
+			stdin_c = dup(STDIN_FILENO);
+			stdout_c = dup(STDOUT_FILENO);
+		}
+		if (!redirect_fds(cmd))
+		{
+			if (cmd-> is_builtin)
+				*status = execute_builtin(cmd, *status, env);
+			else
+				*status = execute_external(cmd, env);
+		}
+		if (need_redirect(cmd))
+			reset_stds(stdin_c, stdout_c);
+		exit (*status);
+	}
+	else
+		exit (*status);
+}
+
 void	execute_command(t_command *cmd_list, int *status, t_env_list **env)
 {
 	t_command	*cmd;
 	int			pipes[2];
 	pid_t		pid;		
-	int			stdin_c;
-	int			stdout_c;
 	int			prev_fd;
-	int			wstatus;
 
 	cmd = cmd_list;
 	prev_fd = -1;
-	if (cmd->next == NULL && cmd->pipe == 0)
-	{
-		handle_no_pipe_cmd(cmd, status, env);
+	if (!starting_exec(cmd_list, status, env))
 		return ;
-	}
-	t_command *tmp = cmd_list;
-	while (tmp)
-	{
-		if (tmp->heredoc == 1)
-			open_heredocs(tmp);
-		tmp = tmp->next;
-	}
 	while (cmd)
 	{
 		if (cmd->next && pipe(pipes) == -1)
 			error_exit(1, NULL, &cmd_list, env);
 		pid = fork();
 		if (pid == 0)
-		{
-			/*new*/
-			if (prev_fd != -1)
-				dup2(prev_fd, STDIN_FILENO);
-
-			if (cmd->next)
-				dup2(pipes[1], STDOUT_FILENO);
-			if (prev_fd != -1)
-				close(prev_fd);
-			if (cmd->next)
-			{
-				close(pipes[0]);
-				close(pipes[1]);
-			}
-			/*till here*/
-			if (check_found_command(cmd, status, env) != 127)
-			{	
-				// if (cmd->heredoc == 1)
-				// 	open_heredocs(cmd);
-				if (need_redirect(cmd))
-				{	
-					stdin_c = dup(STDIN_FILENO);
-					stdout_c = dup(STDOUT_FILENO);
-				}
-				if (!redirect_fds(cmd))
-				{
-					if (cmd-> is_builtin)
-						*status = execute_builtin(cmd, *status, env);
-					else
-						*status = execute_external(cmd, env);
-				}
-				if (need_redirect(cmd))
-					reset_stds(stdin_c, stdout_c);
-				exit (*status);
-			}
-			else
-				exit (*status);
-		}
+			handle_child(cmd, status, pipes, prev_fd, env);
 		else
 		{
 			if (prev_fd != -1)
@@ -149,12 +138,5 @@ void	execute_command(t_command *cmd_list, int *status, t_env_list **env)
 		}
 		cmd = cmd->next;
 	}
-	while (wait(&wstatus) != -1 || errno != ECHILD)
-	{
-		if (WIFEXITED(wstatus))
-			*status = WEXITSTATUS(wstatus);
-		else if (WIFSIGNALED(wstatus))
-			*status = 128 + WTERMSIG(wstatus);
-	}
-
+	waiting(status);
 }
