@@ -42,6 +42,14 @@ typedef struct	s_ints
 	int	end;
 }	t_ints;
 
+typedef struct	s_pipe
+{
+	int		pipes[2];
+	int		prev_fd;
+	pid_t	pid;
+}	t_pipe;
+
+
 typedef struct s_token
 {
 	char			*data;
@@ -101,6 +109,7 @@ t_ttype		token_type(char *data);
 void		tokens_add_back(t_token **tokens_list, t_token *token);
 int			handle_combined_token(char *cmd, int i, t_token **tokens_list);
 int			is_space_or_operator(char c);
+int			is_redirect(t_ttype type);
 
 
 // quotes functions
@@ -142,6 +151,7 @@ void		execute_command(t_command *cmd_list, int *status, t_env_list **env);
 void		waiting(int *status);
 int			starting_exec(t_command *cmd_list, int *status, t_env_list **env);
 void		handle_no_pipe_cmd(t_command *cmd_list, int *status, t_env_list **env);
+int			check_found_command(t_command *cmd, int *status, t_env_list **env);
 
 
 // builtin commands functions

@@ -1,25 +1,5 @@
 #include "../minishell.h"
 
-int	check_found_command(t_command *cmd, int *status, t_env_list **env)
-{
-	char	*path;
-
-	if (cmd->is_builtin)
-		return (1);
-	else
-	{
-		path = get_cmd_path(cmd->av[0], env);
-		if (!path)
-		{
-			printf("%s: command not found\n", cmd->av[0]);
-			*status = 127;
-			return (127);
-		}
-		free(path);
-		return (1);
-	}
-}
-
 int	execute_builtin(t_command *cmd, int status, t_env_list **env)
 {
 	if (!cmd || !cmd->av)
@@ -69,22 +49,22 @@ void	handle_no_pipe_cmd(t_command *cmd_list, int *status, t_env_list **env)
 	}
 }
 
-void	handle_child(t_command *cmd, int *status, int *pipes, int prev_fd, t_env_list **env)
+void	handle_child(t_command *cmd, int *status, t_pipe *pipe, t_env_list **env)
 {
 	int	stdin_c;
 	int	stdout_c;
 
-	if (prev_fd != -1)
-		dup2(prev_fd, STDIN_FILENO);
+	if (pipe->prev_fd != -1)
+		dup2(pipe->prev_fd, STDIN_FILENO);
 
 	if (cmd->next)
-		dup2(pipes[1], STDOUT_FILENO);
-	if (prev_fd != -1)
-		close(prev_fd);
+		dup2(pipe->pipes[1], STDOUT_FILENO);
+	if (pipe->prev_fd != -1)
+		close(pipe->prev_fd);
 	if (cmd->next)
 	{
-		close(pipes[0]);
-		close(pipes[1]);
+		close(pipe->pipes[0]);
+		close(pipe->pipes[1]);
 	}
 	if (check_found_command(cmd, status, env) != 127)
 	{	
@@ -108,34 +88,38 @@ void	handle_child(t_command *cmd, int *status, int *pipes, int prev_fd, t_env_li
 		exit (*status);
 }
 
+void	in_parent(t_command *cmd, t_pipe *pipe)
+{
+	if (pipe->prev_fd != -1)
+		close(pipe->prev_fd);
+	if (cmd->next)
+		close(pipe->pipes[1]);
+	if (cmd->in_fd > 2)
+		close(cmd->in_fd);
+	if (cmd->next)
+		pipe->prev_fd = pipe->pipes[0];
+	else
+		pipe->prev_fd = -1;
+}
+
 void	execute_command(t_command *cmd_list, int *status, t_env_list **env)
 {
 	t_command	*cmd;
-	int			pipes[2];
-	pid_t		pid;		
-	int			prev_fd;
+	t_pipe		pipe_s;
 
 	cmd = cmd_list;
-	prev_fd = -1;
+	pipe_s.prev_fd = -1;
 	if (!starting_exec(cmd_list, status, env))
 		return ;
 	while (cmd)
 	{
-		if (cmd->next && pipe(pipes) == -1)
+		if (cmd->next && pipe(pipe_s.pipes) == -1)
 			error_exit(1, NULL, &cmd_list, env);
-		pid = fork();
-		if (pid == 0)
-			handle_child(cmd, status, pipes, prev_fd, env);
+		pipe_s.pid = fork();
+		if (pipe_s.pid == 0)
+			handle_child(cmd, status, &pipe_s, env);
 		else
-		{
-			if (prev_fd != -1)
-				close(prev_fd);
-			if (cmd->next)
-				close(pipes[1]);
-			if (cmd->in_fd > 2)
-				close(cmd->in_fd);
-			prev_fd = (cmd->next) ? pipes[0] : -1;
-		}
+			in_parent(cmd, &pipe_s);
 		cmd = cmd->next;
 	}
 	waiting(status);

@@ -1,5 +1,25 @@
 # include "../minishell.h"
 
+int	check_found_command(t_command *cmd, int *status, t_env_list **env)
+{
+	char	*path;
+
+	if (cmd->is_builtin)
+		return (1);
+	else
+	{
+		path = get_cmd_path(cmd->av[0], env);
+		if (!path)
+		{
+			printf("%s: command not found\n", cmd->av[0]);
+			*status = 127;
+			return (127);
+		}
+		free(path);
+		return (1);
+	}
+}
+
 int	starting_exec(t_command *cmd_list, int *status, t_env_list **env)
 {
 	t_command	*tmp;
