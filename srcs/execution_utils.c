@@ -53,3 +53,22 @@ void	waiting(int *status)
 			*status = 128 + WTERMSIG(wstatus);
 	}
 }
+
+void	handle_child_cmd(t_command *cmd, int *status, t_env_list **env, int *std)
+{	
+	if (need_redirect(cmd))
+	{	
+		std[0] = dup(STDIN_FILENO);
+		std[1] = dup(STDOUT_FILENO);
+	}
+	if (!redirect_fds(cmd))
+	{
+		if (cmd-> is_builtin)
+			*status = execute_builtin(cmd, *status, env);
+		else
+			*status = execute_external(cmd, env);
+	}
+	if (need_redirect(cmd))
+		reset_stds(std);
+	exit (*status);
+}

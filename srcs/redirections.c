@@ -57,10 +57,10 @@ int	redirect_fds(t_command *cmd)
 	return (0);
 }
 
-void	reset_stds(int saved_stdin, int saved_stdout)
+void	reset_stds(int *std)
 {
-	dup2(saved_stdin, STDIN_FILENO);
-	dup2(saved_stdout, STDOUT_FILENO);
-	close(saved_stdin);
-	close(saved_stdout);
+	dup2(std[0], STDIN_FILENO);
+	dup2(std[1], STDOUT_FILENO);
+	close(std[0]);
+	close(std[1]);
 }

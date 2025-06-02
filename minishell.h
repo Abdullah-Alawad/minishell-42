@@ -148,10 +148,12 @@ char		*expander(char *data, t_env_list *env_lst, int status, char **args);
 
 // execution function
 void		execute_command(t_command *cmd_list, int *status, t_env_list **env);
+int			execute_builtin(t_command *cmd, int status, t_env_list **env);
 void		waiting(int *status);
 int			starting_exec(t_command *cmd_list, int *status, t_env_list **env);
 void		handle_no_pipe_cmd(t_command *cmd_list, int *status, t_env_list **env);
 int			check_found_command(t_command *cmd, int *status, t_env_list **env);
+void		handle_child_cmd(t_command *cmd, int *status, t_env_list **env, int *std);
 
 
 // builtin commands functions
@@ -184,7 +186,7 @@ char		*get_cmd_path(char *cmd, t_env_list **env);
 // redirections
 int			open_heredocs(t_command *cmd);
 int			redirect_fds(t_command *cmd);
-void		reset_stds(int saved_stdin, int saved_stdout);
+void		reset_stds(int *std);
 int			need_redirect(t_command *cmd);
 
 

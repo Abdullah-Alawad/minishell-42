@@ -24,8 +24,7 @@ int	execute_builtin(t_command *cmd, int status, t_env_list **env)
 void	handle_no_pipe_cmd(t_command *cmd_list, int *status, t_env_list **env)
 {
 	t_command	*cmd;
-	int			stdin_c;
-	int			stdout_c;
+	int			std[2];
 
 	cmd = cmd_list;
 	if (check_found_command(cmd, status, env) != 127)
@@ -34,8 +33,8 @@ void	handle_no_pipe_cmd(t_command *cmd_list, int *status, t_env_list **env)
 			open_heredocs(cmd);
 		if (need_redirect(cmd))
 		{	
-			stdin_c = dup(STDIN_FILENO);
-			stdout_c = dup(STDOUT_FILENO);
+			std[0] = dup(STDIN_FILENO);
+			std[1] = dup(STDOUT_FILENO);
 		}
 		if (!redirect_fds(cmd))
 		{
@@ -45,18 +44,16 @@ void	handle_no_pipe_cmd(t_command *cmd_list, int *status, t_env_list **env)
 				*status = execute_external(cmd, env);
 		}
 		if (need_redirect(cmd))
-			reset_stds(stdin_c, stdout_c);
+			reset_stds(std);
 	}
 }
 
 void	handle_child(t_command *cmd, int *status, t_pipe *pipe, t_env_list **env)
 {
-	int	stdin_c;
-	int	stdout_c;
+	int	std[2];
 
 	if (pipe->prev_fd != -1)
 		dup2(pipe->prev_fd, STDIN_FILENO);
-
 	if (cmd->next)
 		dup2(pipe->pipes[1], STDOUT_FILENO);
 	if (pipe->prev_fd != -1)
@@ -67,23 +64,7 @@ void	handle_child(t_command *cmd, int *status, t_pipe *pipe, t_env_list **env)
 		close(pipe->pipes[1]);
 	}
 	if (check_found_command(cmd, status, env) != 127)
-	{	
-		if (need_redirect(cmd))
-		{	
-			stdin_c = dup(STDIN_FILENO);
-			stdout_c = dup(STDOUT_FILENO);
-		}
-		if (!redirect_fds(cmd))
-		{
-			if (cmd-> is_builtin)
-				*status = execute_builtin(cmd, *status, env);
-			else
-				*status = execute_external(cmd, env);
-		}
-		if (need_redirect(cmd))
-			reset_stds(stdin_c, stdout_c);
-		exit (*status);
-	}
+		handle_child_cmd(cmd, status, env, std);
 	else
 		exit (*status);
 }
