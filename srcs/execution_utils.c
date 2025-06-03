@@ -1,4 +1,4 @@
-# include "../minishell.h"
+#include "../minishell.h"
 
 int	check_found_command(t_command *cmd, int *status, t_env_list **env)
 {
@@ -27,10 +27,10 @@ int	starting_exec(t_command *cmd_list, int *status, t_env_list **env)
 
 	cmd = cmd_list;
 	if (cmd->next == NULL && cmd->pipe == 0)
-		{
-			handle_no_pipe_cmd(cmd, status, env);
-			return (0);
-		}
+	{
+		handle_no_pipe_cmd(cmd, status, env);
+		return (0);
+	}
 	tmp = cmd_list;
 	while (tmp)
 	{
@@ -42,7 +42,7 @@ int	starting_exec(t_command *cmd_list, int *status, t_env_list **env)
 }
 
 void	waiting(int *status)
-{	
+{
 	int	wstatus;
 
 	while (wait(&wstatus) != -1 || errno != ECHILD)
@@ -54,7 +54,8 @@ void	waiting(int *status)
 	}
 }
 
-void	handle_child_cmd(t_command *cmd, int *status, t_env_list **env, int *std)
+void	handle_child_cmd(t_command *cmd, int *status,
+		t_env_list **env, int *std)
 {	
 	if (need_redirect(cmd))
 	{	
