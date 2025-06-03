@@ -9,6 +9,7 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <sys/wait.h>
+# include <errno.h>
 
 # define FOREVER	1
 # define GREEN		"\033[0;32m"
@@ -40,6 +41,14 @@ typedef struct	s_ints
 	int	start;
 	int	end;
 }	t_ints;
+
+typedef struct	s_pipe
+{
+	int		pipes[2];
+	int		prev_fd;
+	pid_t	pid;
+}	t_pipe;
+
 
 typedef struct s_token
 {
@@ -100,6 +109,7 @@ t_ttype		token_type(char *data);
 void		tokens_add_back(t_token **tokens_list, t_token *token);
 int			handle_combined_token(char *cmd, int i, t_token **tokens_list);
 int			is_space_or_operator(char c);
+int			is_redirect(t_ttype type);
 
 
 // quotes functions
@@ -138,6 +148,13 @@ char		*expander(char *data, t_env_list *env_lst, int status, char **args);
 
 // execution function
 void		execute_command(t_command *cmd_list, int *status, t_env_list **env);
+int			execute_builtin(t_command *cmd, int status, t_env_list **env);
+void		waiting(int *status);
+int			starting_exec(t_command *cmd_list, int *status, t_env_list **env);
+void		handle_no_pipe_cmd(t_command *cmd_list, int *status, t_env_list **env);
+int			check_found_command(t_command *cmd, int *status, t_env_list **env);
+void		handle_child_cmd(t_command *cmd, int *status, t_env_list **env, int *std);
+
 
 // builtin commands functions
 int			handle_env(t_env_list **env);
@@ -164,11 +181,12 @@ void		free_paths(char **paths);
 char		*get_env_path(t_env_list *env);
 int			handle_child_process(t_command *cmd, t_env_list **env, char *path);
 int			handle_parent_process(int pid, char *path);
+char		*get_cmd_path(char *cmd, t_env_list **env);
 
 // redirections
 int			open_heredocs(t_command *cmd);
 int			redirect_fds(t_command *cmd);
-void		reset_stds(int saved_stdin, int saved_stdout);
+void		reset_stds(int *std);
 int			need_redirect(t_command *cmd);
 
 

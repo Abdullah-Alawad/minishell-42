@@ -48,19 +48,41 @@ int	lexer(char *command, t_token **tokens_list)
 	return (1);
 }
 
+// int	check_tokens(t_token *tokens_list)
+// {
+// 	if (!tokens_list)
+// 		return (0);
+// 	if (tokens_list->type == T_PIPE)
+// 		return (0);
+// 	while (tokens_list)
+// 	{
+// 		if (tokens_list->type != T_DATA)
+// 		{
+// 			if (tokens_list->next == NULL)
+// 				return (0);
+// 			if (tokens_list->next->type != T_DATA || tokens_list->next->type != T_REDIRECT_IN)
+// 				return (0);
+// 		}
+// 		tokens_list = tokens_list->next;
+// 	}
+// 	return (1);
+// }
+
 int	check_tokens(t_token *tokens_list)
 {
-	if (!tokens_list)
-		return (0);
-	if (tokens_list->type == T_PIPE)
+	if (!tokens_list || tokens_list->type == T_PIPE)
 		return (0);
 	while (tokens_list)
 	{
-		if (tokens_list->type != T_DATA)
+		if (tokens_list->type == T_PIPE)
 		{
-			if (tokens_list->next == NULL)
+			if (!tokens_list->next || (tokens_list->next->type != T_DATA &&
+				!is_redirect(tokens_list->next->type)))
 				return (0);
-			if (tokens_list->next->type != T_DATA)
+		}
+		if (is_redirect(tokens_list->type))
+		{
+			if (!tokens_list->next || tokens_list->next->type != T_DATA)
 				return (0);
 		}
 		tokens_list = tokens_list->next;

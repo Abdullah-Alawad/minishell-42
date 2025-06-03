@@ -21,21 +21,20 @@ int	execute_builtin(t_command *cmd, int status, t_env_list **env)
 	return (status);
 }
 
-void	execute_command(t_command *cmd_list, int *status, t_env_list **env)
+void	handle_no_pipe_cmd(t_command *cmd_list, int *status, t_env_list **env)
 {
 	t_command	*cmd;
-	int			stdin_c;
-	int			stdout_c;
+	int			std[2];
 
 	cmd = cmd_list;
-	while (cmd)
-	{
+	if (check_found_command(cmd, status, env) != 127)
+	{	
 		if (cmd->heredoc == 1)
 			open_heredocs(cmd);
 		if (need_redirect(cmd))
 		{	
-			stdin_c = dup(STDIN_FILENO);
-			stdout_c = dup(STDOUT_FILENO);
+			std[0] = dup(STDIN_FILENO);
+			std[1] = dup(STDOUT_FILENO);
 		}
 		if (!redirect_fds(cmd))
 		{
@@ -45,7 +44,64 @@ void	execute_command(t_command *cmd_list, int *status, t_env_list **env)
 				*status = execute_external(cmd, env);
 		}
 		if (need_redirect(cmd))
-			reset_stds(stdin_c, stdout_c);
+			reset_stds(std);
+	}
+}
+
+void	handle_child(t_command *cmd, int *status, t_pipe *pipe, t_env_list **env)
+{
+	int	std[2];
+
+	if (pipe->prev_fd != -1)
+		dup2(pipe->prev_fd, STDIN_FILENO);
+	if (cmd->next)
+		dup2(pipe->pipes[1], STDOUT_FILENO);
+	if (pipe->prev_fd != -1)
+		close(pipe->prev_fd);
+	if (cmd->next)
+	{
+		close(pipe->pipes[0]);
+		close(pipe->pipes[1]);
+	}
+	if (check_found_command(cmd, status, env) != 127)
+		handle_child_cmd(cmd, status, env, std);
+	else
+		exit (*status);
+}
+
+void	in_parent(t_command *cmd, t_pipe *pipe)
+{
+	if (pipe->prev_fd != -1)
+		close(pipe->prev_fd);
+	if (cmd->next)
+		close(pipe->pipes[1]);
+	if (cmd->in_fd > 2)
+		close(cmd->in_fd);
+	if (cmd->next)
+		pipe->prev_fd = pipe->pipes[0];
+	else
+		pipe->prev_fd = -1;
+}
+
+void	execute_command(t_command *cmd_list, int *status, t_env_list **env)
+{
+	t_command	*cmd;
+	t_pipe		pipe_s;
+
+	cmd = cmd_list;
+	pipe_s.prev_fd = -1;
+	if (!starting_exec(cmd_list, status, env))
+		return ;
+	while (cmd)
+	{
+		if (cmd->next && pipe(pipe_s.pipes) == -1)
+			error_exit(1, NULL, &cmd_list, env);
+		pipe_s.pid = fork();
+		if (pipe_s.pid == 0)
+			handle_child(cmd, status, &pipe_s, env);
+		else
+			in_parent(cmd, &pipe_s);
 		cmd = cmd->next;
 	}
+	waiting(status);
 }
