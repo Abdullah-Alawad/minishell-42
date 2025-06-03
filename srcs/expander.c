@@ -25,20 +25,17 @@ void	append_char_to_result(char *data, t_expand *ex)
 void	handel_s_q(char *data, t_expand *ex)
 {
 	append_char_to_result(data, ex);
-	//ex->i++;
 	while (data[ex->i] && data[ex->i] != '\'')
 		append_char_to_result(data, ex);
 	if (data[ex->i] == '\'')
 	{
 		append_char_to_result(data, ex);
-		//ex->i++;
 	}
 }
 
 void	handel_d_q(char *data, t_expand *ex)
 {
 	append_char_to_result(data, ex);
-	//ex->i++;
 	while (data[ex->i] && data[ex->i] != '"')
 	{
 		if (data[ex->i] == '$')
@@ -52,7 +49,6 @@ void	handel_d_q(char *data, t_expand *ex)
 	if (data[ex->i] == '"')
 	{
 		append_char_to_result(data, ex);
-		//ex->i++;
 	}
 }
 
