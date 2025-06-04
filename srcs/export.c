@@ -36,7 +36,7 @@ int	new_export(char *cmd, t_env_list **env, int exp)
 
 void	update_env(char *cmd, t_env_list **env)
 {
-	int			start;
+	size_t		start;
 	int			len;
 	char		*new_data;
 	t_env_list	*tmp;
@@ -49,7 +49,7 @@ void	update_env(char *cmd, t_env_list **env)
 		return ; //double check
 	while (tmp)
 	{
-		if (ft_strncmp(cmd, tmp->key, start - 1) == 0)
+		if (ft_strncmp(cmd, tmp->key, start) == 0 && ft_strlen(tmp->key) == start)
 		{
 			free(tmp->data);
 			tmp->data = new_data;
