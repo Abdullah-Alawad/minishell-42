@@ -110,6 +110,8 @@ void		tokens_add_back(t_token **tokens_list, t_token *token);
 int			handle_combined_token(char *cmd, int i, t_token **tokens_list);
 int			is_space_or_operator(char c);
 int			is_redirect(t_ttype type);
+int			valid_command(t_token *tokens, int *status);
+int			check_tokens(t_token *tokens_list);
 
 
 // quotes functions
@@ -132,20 +134,20 @@ t_env_list	*init_env(char *str, int status);
 void		env_add_back(t_env_list **lst, t_env_list *env);
 
 // expander functions //abeer
-void	expand_braced_variable(char *data, t_expand *ex);
-void	expand_status_variable(t_expand *ex);
-void	expand_positional_parameter(char *data, t_expand *ex);
-void	expand_named_variable(char *data, t_expand *ex);
-void	handle_dollar(char *data, t_expand *ex);
-char	*ft_strjoin_and_free(char *s1, char *s2);
-char	*get_positional_value(char *num_str, char **args, int status);
-char	*get_env_value(char *var_name, t_env_list *env);
-void	append_char_to_result(char *data, t_expand *ex);
-void	handel_s_q(char *data, t_expand *ex);
-void	handel_d_q(char *data, t_expand *ex);
-void	do_expand(char *data, t_expand *ex);
-char	*expander(char *data, t_env_list *env_lst, int status, char **args);
-void	expand_dollar_with_digits(char *data, t_expand *ex);
+void		expand_braced_variable(char *data, t_expand *ex);
+void		expand_status_variable(t_expand *ex);
+void		expand_positional_parameter(char *data, t_expand *ex);
+void		expand_named_variable(char *data, t_expand *ex);
+void		handle_dollar(char *data, t_expand *ex);
+char		*ft_strjoin_and_free(char *s1, char *s2);
+char		*get_positional_value(char *num_str, char **args, int status);
+char		*get_env_value(char *var_name, t_env_list *env);
+void		append_char_to_result(char *data, t_expand *ex);
+void		handel_s_q(char *data, t_expand *ex);
+void		handel_d_q(char *data, t_expand *ex);
+void		do_expand(char *data, t_expand *ex);
+char		*expander(char *data, t_env_list *env_lst, int status, char **args);
+void		expand_dollar_with_digits(char *data, t_expand *ex);
 
 // execution function
 void		execute_command(t_command *cmd_list, int *status, t_env_list **env);
@@ -189,6 +191,7 @@ int			open_heredocs(t_command *cmd);
 int			redirect_fds(t_command *cmd);
 void		reset_stds(int *std);
 int			need_redirect(t_command *cmd);
+int			write_fd_error(char *file);
 
 
 // frees functions

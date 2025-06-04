@@ -48,26 +48,6 @@ int	lexer(char *command, t_token **tokens_list)
 	return (1);
 }
 
-// int	check_tokens(t_token *tokens_list)
-// {
-// 	if (!tokens_list)
-// 		return (0);
-// 	if (tokens_list->type == T_PIPE)
-// 		return (0);
-// 	while (tokens_list)
-// 	{
-// 		if (tokens_list->type != T_DATA)
-// 		{
-// 			if (tokens_list->next == NULL)
-// 				return (0);
-// 			if (tokens_list->next->type != T_DATA || tokens_list->next->type != T_REDIRECT_IN)
-// 				return (0);
-// 		}
-// 		tokens_list = tokens_list->next;
-// 	}
-// 	return (1);
-// }
-
 int	check_tokens(t_token *tokens_list)
 {
 	if (!tokens_list || tokens_list->type == T_PIPE)
@@ -99,20 +79,14 @@ t_token	*handle_command(char *command, int *status)
 	{
 		if (!lexer(command, &tokens_list))
 		{
-			printf(RED"[ERROR], faild mallocs\n"RESET);
-			return (NULL);
-		}
-		if (!check_tokens(tokens_list))
-		{
-			free_tokens(&tokens_list);
-			printf(RED"[ERROR], syntax error\n"RESET);
-			*status = 2;
+			ft_putstr_fd("[ERROR]: failed mallocs\n", STDERR_FILENO);
 			return (NULL);
 		}
 		return (tokens_list);
 	}
 	else
 	{
+		ft_putstr_fd("minishll: syntax error\n", STDERR_FILENO);
 		*status = 2;
 		return (NULL);
 	}

@@ -47,3 +47,11 @@ int	need_redirect(t_command *cmd)
 	else
 		return (0);
 }
+
+int	write_fd_error(char *file)
+{
+	ft_putstr_fd("minishell: ", STDERR_FILENO);
+	ft_putstr_fd(file, STDERR_FILENO);
+	ft_putstr_fd(": permission denied\n", STDERR_FILENO);
+	return (1);
+}

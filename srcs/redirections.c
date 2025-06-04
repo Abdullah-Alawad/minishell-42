@@ -14,13 +14,15 @@ int	handle_heredoc_redirect(t_command *cmd)
 
 int	handle_input_redirect(t_command *cmd)
 {
-	int	fd;
+	int		fd;
+	char	*file;
 
+	file = cmd->in_file;
 	if (cmd->heredoc == 0 && cmd->in_file)
 	{
 		fd = open(cmd->in_file, O_RDONLY);
 		if (fd < 0)
-			return (1);
+			return (write_fd_error(file));
 		if (dup2(fd, STDIN_FILENO) == -1)
 			return (1);
 		close(fd);
@@ -30,8 +32,10 @@ int	handle_input_redirect(t_command *cmd)
 
 int	handle_output_redirect(t_command *cmd)
 {
-	int	fd;
+	int		fd;
+	char	*file;
 
+	file = cmd->out_file;
 	if (cmd->append == 1 && cmd->out_file)
 		fd = open(cmd->out_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	else if (cmd->append == 2 && cmd->out_file)
@@ -39,7 +43,7 @@ int	handle_output_redirect(t_command *cmd)
 	else
 		return (0);
 	if (fd < 0)
-		return (1);
+		return (write_fd_error(file));
 	if (dup2(fd, STDOUT_FILENO) == -1)
 		return (1);
 	close(fd);
