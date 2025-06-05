@@ -34,7 +34,25 @@ int	new_export(char *cmd, t_env_list **env, int exp)
 	return (1);
 }
 
-void	update_env(char *cmd, t_env_list **env)
+void	update_env_data(char *cmd, char *new_data, size_t start, t_env_list *tmp)
+{
+	while (tmp)
+	{
+		if (ft_strncmp(cmd, tmp->key, start) == 0 && ft_strlen(tmp->key) == start)
+		{
+			free(tmp->data);
+			tmp->data = new_data;
+			if (tmp->data[0] != '\0')
+				tmp->exported = 0;
+			else
+				tmp->exported = 1;
+			return ;
+		}
+		tmp = tmp->next;
+	}
+}
+
+int	update_env(char *cmd, t_env_list **env)
 {
 	size_t		start;
 	int			len;
@@ -44,19 +62,13 @@ void	update_env(char *cmd, t_env_list **env)
 	tmp = *env;
 	len = ft_strlen(cmd);
 	start = ft_strchr_i(cmd, '=');
+	if (start == 0)
+		return (1);
 	new_data = ft_substr(cmd, start + 1, len - (start + 1));
 	if (!new_data)
-		return ; //double check
-	while (tmp)
-	{
-		if (ft_strncmp(cmd, tmp->key, start) == 0 && ft_strlen(tmp->key) == start)
-		{
-			free(tmp->data);
-			tmp->data = new_data;
-			return ;
-		}
-		tmp = tmp->next;
-	}
+		return (0);
+	update_env_data(cmd, new_data, start, tmp);
+	return (1);
 }
 
 int	add_export(char **cmd, t_env_list **env)
@@ -80,7 +92,10 @@ int	add_export(char **cmd, t_env_list **env)
 			env_add_back(env, new);
 		}
 		else
-			update_env(cmd[i], env);
+		{
+			if (!update_env(cmd[i], env))
+				return (1);
+		}
 		i++;
 	}
 	return (0);
