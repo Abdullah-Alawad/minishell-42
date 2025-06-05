@@ -67,7 +67,7 @@ typedef struct s_env_list
 	struct s_env_list	*next;
 }	t_env_list;
 
-typedef struct s_expand //add by abeer
+typedef struct s_expand
 {
 	t_env_list	*env_lst;
 	char		*result;
@@ -94,7 +94,6 @@ typedef struct s_command
 	int					append;
 	int					is_builtin;
 	int					status;
-	char				**args;
 	struct s_command	*next;
 }	t_command;
 
@@ -165,6 +164,9 @@ int			handle_export(t_command *cmd, t_env_list **env);
 t_env_list	*init_special_env(char *str, int status);
 void		print_export(t_env_list **env);
 int			ft_strchr_i(const char *s, int c);
+int			valid_export(char *cmd);
+int			new_export(char *cmd, t_env_list **env, int exp);
+int			check_export_format(char *cmd);
 int			handle_unset(t_command *cmd, t_env_list **env);
 int			handle_cd(char **cmd, t_env_list **env);
 int			count_av(char **str);

@@ -1,39 +1,5 @@
 #include "../minishell.h"
 
-int	check_export_format(char *cmd)
-{
-	int	pos;
-
-	if (ft_strchr_i(cmd, '='))
-	{
-		pos = ft_strchr_i(cmd, '=');
-		if (cmd[pos - 1] && cmd[pos + 1])
-			return (0);
-		else if (cmd[pos - 1])
-			return (1);
-	}
-	return (2);
-}
-
-int	new_export(char *cmd, t_env_list **env, int exp)
-{
-	size_t		len;
-	t_env_list	*tmp;
-
-	tmp = *env;
-	len = ft_strchr_i(cmd, '=');
-	if (len == 0)
-		len = ft_strlen(cmd);
-	while (tmp)
-	{
-		if ((exp == 2 && ft_strcmp(cmd, tmp->key) == 0) ||
-    	(exp != 2 && ft_strncmp(cmd, tmp->key, len) == 0 && ft_strlen(tmp->key) == len))
-		return (0);
-		tmp = tmp->next;
-	}
-	return (1);
-}
-
 void	update_env_data(char *cmd, char *new_data, size_t start, t_env_list *tmp)
 {
 	while (tmp)
@@ -71,30 +37,41 @@ int	update_env(char *cmd, t_env_list **env)
 	return (1);
 }
 
+int	add_new_export(char *cmd, t_env_list **env, int exp)
+{
+	t_env_list	*new;
+
+	if (exp == 2)
+		new = init_special_env(cmd, exp);
+	else
+		new = init_env(cmd, exp);
+	if (!new)
+		return (0);
+	env_add_back(env, new);
+	return (1);
+}
+
 int	add_export(char **cmd, t_env_list **env)
 {
 	int			i;
-	t_env_list	*new;
 	int			exp;
 
 	i = 1;
 	while (cmd[i])
 	{
-		exp = check_export_format(cmd[i]);
-		if (new_export(cmd[i], env, exp))
+		if (valid_export(cmd[i]))
 		{
-			if (exp == 2)
-				new = init_special_env(cmd[i], exp);
+			exp = check_export_format(cmd[i]);
+			if (new_export(cmd[i], env, exp))
+			{
+				if (!add_new_export(cmd[i], env, exp))
+					return (1);
+			}
 			else
-				new = init_env(cmd[i], exp);
-			if (!new)
-				return (1); // double check
-			env_add_back(env, new);
-		}
-		else
-		{
-			if (!update_env(cmd[i], env))
-				return (1);
+			{
+				if (!update_env(cmd[i], env))
+					return (1);
+			}
 		}
 		i++;
 	}
@@ -110,7 +87,6 @@ int	handle_export(t_command *cmd, t_env_list **env)
 	}
 	else
 	{
-		// you can check export format ****
 		if (!add_export(cmd->av, env))
 			return (0);
 		else

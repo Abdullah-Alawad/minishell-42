@@ -58,3 +58,30 @@ int	ft_strchr_i(const char *s, int c)
 		return (i);
 	return (0);
 }
+
+int	print_export_error(char *cmd)
+{
+	ft_putstr_fd("-minishell: export: `", 2);
+	ft_putstr_fd(cmd, 2);
+	ft_putstr_fd("\': not a valid identifier\n", 2);
+	return (0);
+}
+
+int	valid_export(char *cmd)
+{
+	int	i;
+
+	if (!cmd[0])
+		return (0);
+	i = 0;
+	if (!ft_isalpha(cmd[i]) && cmd[i] != '_')
+		return (print_export_error(cmd));
+	i++;
+	while (cmd[i] && cmd[i] != '=')
+	{
+		if (!ft_isalnum(cmd[i]) && cmd[i] != '_')
+			return (print_export_error(cmd));
+		i++;
+	}
+	return (1);
+}
