@@ -1,13 +1,24 @@
 #include "../minishell.h"
 
-void	write_heredoc(char *line, int fd)
+char	*expand_line(char *line, t_env_list *env, int status)
 {
+	char	*result;
+
+	result = expander(line, env, status, NULL);
+	if (!result)
+		return (NULL);
+	return (result);
+}
+
+void	write_heredoc(char *line, int fd, t_env_list *env, int *status)
+{
+	line = expand_line(line, env, *status);
 	write(fd, line, ft_strlen(line));
 	write(fd, "\n", 1);
 	free(line);
 }
 
-int	open_heredocs(t_command *cmd)
+int	open_heredocs(t_command *cmd, t_env_list *env, int *status)
 {
 	int		pipes[2];
 	char	*line;
@@ -23,7 +34,7 @@ int	open_heredocs(t_command *cmd)
 			line = readline("> ");
 			if (!line || ft_strcmp(line, cmd->here_arr[i]) == 0)
 				break;
-			write_heredoc(line, pipes[1]);
+			write_heredoc(line, pipes[1], env, status);
 		}
 		free(line);
 		close(pipes[1]);

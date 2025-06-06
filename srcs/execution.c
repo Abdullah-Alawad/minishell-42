@@ -30,7 +30,7 @@ void	handle_no_pipe_cmd(t_command *cmd_list, int *status, t_env_list **env)
 	if (check_found_command(cmd, status, env) != 127)
 	{	
 		if (cmd->heredoc == 1)
-			open_heredocs(cmd);
+			open_heredocs(cmd, *env, status);
 		if (need_redirect(cmd))
 		{	
 			std[0] = dup(STDIN_FILENO);

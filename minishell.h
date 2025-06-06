@@ -193,7 +193,7 @@ int			handle_parent_process(int pid, char *path);
 char		*get_cmd_path(char *cmd, t_env_list **env);
 
 // redirections
-int			open_heredocs(t_command *cmd);
+int			open_heredocs(t_command *cmd, t_env_list *env, int *status);
 int			redirect_fds(t_command *cmd);
 void		reset_stds(int *std);
 int			need_redirect(t_command *cmd);

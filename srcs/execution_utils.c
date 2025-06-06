@@ -35,7 +35,7 @@ int	starting_exec(t_command *cmd_list, int *status, t_env_list **env)
 	while (tmp)
 	{
 		if (tmp->heredoc == 1)
-			open_heredocs(tmp);
+			open_heredocs(cmd, *env, status);
 		tmp = tmp->next;
 	}
 	return (1);
