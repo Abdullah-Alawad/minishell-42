@@ -78,6 +78,8 @@ typedef struct s_expand
 	int			start;
 	int			status;
 	char		**args;
+	int 		is_redirection_context;
+	int 		ambiguous_redirect;
 }	t_expand;
 
 
@@ -147,6 +149,8 @@ void		handel_d_q(char *data, t_expand *ex);
 void		do_expand(char *data, t_expand *ex);
 char		*expander(char *data, t_env_list *env_lst, int status, char **args);
 void		expand_dollar_with_digits(char *data, t_expand *ex);
+int 		contains_whitespace(const char *str);
+void		setup_expand(t_expand *ex, t_env_list *env, int status, char **args);
 
 // execution function
 void		execute_command(t_command *cmd_list, int *status, t_env_list **env);
@@ -202,6 +206,7 @@ void		free_env_list(t_env_list **env);
 void		free_av(char **s);
 void		free_commands(t_command **cmds);
 void		error_exit(int status, t_token **tokens, t_command **cmds, t_env_list **env);
+void		exit_expand_error(char *cmd, t_env_list **env, t_expand **ex);
 
 
 

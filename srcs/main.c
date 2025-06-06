@@ -98,6 +98,8 @@ int	main(int ac, char **av, char **env)
 			error_cmd(&env_lst, ac);
 		add_history(command);
 		command = expander(command, env_lst, status, av);
+		if (!command)
+			continue ;
 		cmds_list = create_and_parse_tokens(command, &status, env_lst);
 		//print_command_list(cmds_list);
 		if (cmds_list)
