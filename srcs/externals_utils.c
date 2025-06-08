@@ -81,7 +81,7 @@ char	*get_env_path(t_env_list *env)
 	{
 		if (tmp->key)
 		{
-			len = ft_strlen(tmp->key); //problem here
+			len = ft_strlen(tmp->key);
 			if (ft_strncmp(tmp->key, "PATH", len) == 0)
 				return (tmp->data);
 		}

@@ -7,6 +7,7 @@ int	handle_child_process(t_command *cmd, t_env_list **env, char *path)
 	envp = env_list_to_array(env);
 	if (!envp)
 		return (1);
+	redirect_fds(cmd);
 	execve(path, cmd->av, envp);
 	perror("execve");
 	exit(EXIT_FAILURE);
