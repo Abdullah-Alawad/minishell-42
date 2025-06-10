@@ -34,27 +34,17 @@ int	execute_builtin(t_command *cmd, int status, t_env_list **env)
 void	handle_no_pipe_cmd(t_command *cmd_list, int *status, t_env_list **env)
 {
 	t_command	*cmd;
-	//int			std[2];
 
 	cmd = cmd_list;
 	if (check_found_command(cmd, status, env) != 127)
 	{	
 		if (cmd->heredoc == 1)
 			open_heredocs(cmd, *env, status);
-		// if (need_redirect(cmd))
-		// {	
-		// 	std[0] = dup(STDIN_FILENO);
-		// 	std[1] = dup(STDOUT_FILENO);
-		// }
-		//if (!redirect_fds(cmd))
-		//{
-			if (cmd-> is_builtin)
-				*status = execute_builtin(cmd, *status, env);
-			else
-				*status = execute_external(cmd, env);
-		//}
-		// if (need_redirect(cmd))
-		// 	reset_stds(std);
+
+		if (cmd-> is_builtin)
+			*status = execute_builtin(cmd, *status, env);
+		else
+			*status = execute_external(cmd, env);
 	}
 }
 
@@ -85,8 +75,11 @@ void	in_parent(t_command *cmd, t_pipe *pipe)
 		close(pipe->prev_fd);
 	if (cmd->next)
 		close(pipe->pipes[1]);
-	if (cmd->in_fd > 2)
+	if (cmd->in_fd != -1)
+	{
 		close(cmd->in_fd);
+		cmd->in_fd = -1;
+	}
 	if (cmd->next)
 		pipe->prev_fd = pipe->pipes[0];
 	else

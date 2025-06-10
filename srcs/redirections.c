@@ -26,6 +26,7 @@ int	handle_input_redirect(t_command *cmd)
 		if (dup2(fd, STDIN_FILENO) == -1)
 			return (1);
 		close(fd);
+		cmd->in_fd = -1;
 	}
 	return (0);
 }
@@ -47,6 +48,7 @@ int	handle_output_redirect(t_command *cmd)
 	if (dup2(fd, STDOUT_FILENO) == -1)
 		return (1);
 	close(fd);
+	cmd->out_fd = -1;
 	return (0);
 }
 
