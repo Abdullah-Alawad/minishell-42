@@ -88,7 +88,8 @@ int	execute_external(t_command *cmd, t_env_list **env)
 		return (1);
 	else if (pid == 0)
 		handle_child_process(cmd, env, path);
-	exit_code = handle_parent_process(pid, path);
+	else
+		exit_code = handle_parent_process(pid, path);
 	return (exit_code);
 }
 

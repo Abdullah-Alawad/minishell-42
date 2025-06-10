@@ -10,6 +10,7 @@
 # include <readline/history.h>
 # include <sys/wait.h>
 # include <errno.h>
+# include <sys/stat.h>
 
 # define FOREVER	1
 # define GREEN		"\033[0;32m"

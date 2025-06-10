@@ -74,20 +74,13 @@ t_token	*handle_command(char *command, int *status)
 {
 	t_token	*tokens_list;
 
+	(void)status;
 	tokens_list = NULL;
-	if (good_quotes(command))
+	if (!lexer(command, &tokens_list))
 	{
-		if (!lexer(command, &tokens_list))
-		{
-			ft_putstr_fd("[ERROR]: failed mallocs\n", STDERR_FILENO);
-			return (NULL);
-		}
-		return (tokens_list);
-	}
-	else
-	{
-		ft_putstr_fd("minishll: syntax error\n", STDERR_FILENO);
-		*status = 2;
+		ft_putstr_fd("[ERROR]: failed mallocs\n", STDERR_FILENO);
 		return (NULL);
 	}
+	return (tokens_list);
 }
+

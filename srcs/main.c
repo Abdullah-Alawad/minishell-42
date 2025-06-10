@@ -1,43 +1,5 @@
 #include "../minishell.h"
 
-
-void	print_command_list(t_command *cmd)
-{
-	int i;
-
-	while (cmd)
-	{
-		printf("Arguments:\n");
-		if (cmd->av)
-		{
-			i = 0;
-			while (cmd->av[i])
-			{
-				printf("  av[%d]: %s\n", i, cmd->av[i]);
-				i++;
-			}
-		}
-		printf("here array:\n");
-		if (cmd->here_arr)
-		{
-			i = 0;
-			while (cmd->here_arr[i])
-			{
-				printf("  av[%d]: %s\n", i, cmd->here_arr[i]);
-				i++;
-			}
-		}
-		printf("Input File: %s\n", cmd->in_file ? cmd->in_file : "NULL");
-		printf("Output File: %s\n", cmd->out_file ? cmd->out_file : "NULL");
-		printf("Pipe: %d\n", cmd->pipe);
-		printf("Heredoc: %d\n", cmd->heredoc);
-		printf("Append: %d\n", cmd->append);
-		printf("Is Builtin: %d\n", cmd->is_builtin);
-		printf("----------------------\n");
-		cmd = cmd->next;
-	}
-}
-
 void	error_cmd(t_env_list **env, int ac)
 {
 	(void)ac;
@@ -66,6 +28,12 @@ t_command*	create_and_parse_tokens(char *command, int *status, t_env_list *env_l
 	t_token		*tokens_list;
 	t_command	*cmds_list;
 
+	if (!good_quotes(command))
+	{
+		ft_putstr_fd("-minishll: syntax error\n", STDERR_FILENO);
+		*status = 2;
+		return (NULL);
+	}
 	tokens_list = handle_command(command, status);
 	if (!tokens_list)
 		error_tokens(&env_lst, command);
@@ -81,12 +49,24 @@ t_command*	create_and_parse_tokens(char *command, int *status, t_env_list *env_l
 		return (NULL);
 }
 
+void	execution(char *command, int *status, t_env_list *env_lst)
+{
+	t_command	*cmds_list;
+	
+	cmds_list = create_and_parse_tokens(command, status, env_lst);
+	if (cmds_list)
+	{
+		execute_command(cmds_list, status, &env_lst);
+		free_commands(&cmds_list);
+	}
+	free(command);
+}
+
 int	main(int ac, char **av, char **env)
 {
 	char		*command;
 	t_env_list	*env_lst;
 	static int	status;
-	t_command	*cmds_list;
 
 	env_lst = create_env_list(env);
 	if (!env_lst)
@@ -100,14 +80,7 @@ int	main(int ac, char **av, char **env)
 		command = expander(command, env_lst, status, av);
 		if (!command)
 			continue ;
-		cmds_list = create_and_parse_tokens(command, &status, env_lst);
-		//print_command_list(cmds_list);
-		if (cmds_list)
-		{
-			execute_command(cmds_list, &status, &env_lst);
-			free_commands(&cmds_list);
-		}
-		free(command);
+		execution(command, &status, env_lst);
 	}
 	return (0);
 }

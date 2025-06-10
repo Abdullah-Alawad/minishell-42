@@ -61,8 +61,23 @@ int	need_redirect(t_command *cmd)
 
 int	write_fd_error(char *file)
 {
-	ft_putstr_fd("minishell: ", STDERR_FILENO);
+	struct stat	fs;
+
+	ft_putstr_fd("-minishell: ", STDERR_FILENO);
 	ft_putstr_fd(file, STDERR_FILENO);
-	ft_putstr_fd(": permission denied\n", STDERR_FILENO);
+	if (stat(file, &fs) == 0)
+	{
+		if (S_ISDIR(fs.st_mode))
+			ft_putstr_fd(": Is a directory\n", STDERR_FILENO);
+		else
+			ft_putstr_fd(": permission denied\n", STDERR_FILENO);
+	}
+	else
+	{
+		if (errno == ENOENT)
+			ft_putstr_fd(": No such file or directory\n", STDERR_FILENO);
+		else if (errno == EACCES)
+			ft_putstr_fd(": permission denied\n", STDERR_FILENO);
+	}
 	return (1);
 }

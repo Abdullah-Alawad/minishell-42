@@ -1,17 +1,7 @@
 #include "../minishell.h"
 
-int	execute_builtin(t_command *cmd, int status, t_env_list **env)
+int	run_builtin(t_command *cmd, int status, t_env_list **env)
 {
-	int	std[2];
-
-	if (need_redirect(cmd))
-	{	
-		std[0] = dup(STDIN_FILENO);
-		std[1] = dup(STDOUT_FILENO);
-	}
-	redirect_fds(cmd);
-	if (!cmd || !cmd->av)
-		return (1);
 	if (ft_strncmp("echo", cmd->av[0], ft_strlen("echo")) == 0)
 		status = handle_echo(cmd->av);
 	else if (ft_strncmp("env", cmd->av[0], ft_strlen("env")) == 0)
@@ -26,6 +16,28 @@ int	execute_builtin(t_command *cmd, int status, t_env_list **env)
 		status = handle_export(cmd, env);
 	else if (ft_strncmp("unset", cmd->av[0], ft_strlen("unset")) == 0)
 		status = handle_unset(cmd, env);
+	return (status);
+}
+
+int	execute_builtin(t_command *cmd, int status, t_env_list **env)
+{
+	int	std[2];
+
+	if (!cmd || !cmd->av)
+		return (1);
+	if (need_redirect(cmd))
+	{	
+		std[0] = dup(STDIN_FILENO);
+		std[1] = dup(STDOUT_FILENO);
+	}
+	if (redirect_fds(cmd))
+		status = run_builtin(cmd, status, env);
+	else
+	{
+		if (need_redirect(cmd))
+			reset_stds(std);
+		return (1);
+	}
 	if (need_redirect(cmd))
 		reset_stds(std);
 	return (status);
@@ -40,8 +52,7 @@ void	handle_no_pipe_cmd(t_command *cmd_list, int *status, t_env_list **env)
 	{	
 		if (cmd->heredoc == 1)
 			open_heredocs(cmd, *env, status);
-
-		if (cmd-> is_builtin)
+		if (cmd->is_builtin)
 			*status = execute_builtin(cmd, *status, env);
 		else
 			*status = execute_external(cmd, env);

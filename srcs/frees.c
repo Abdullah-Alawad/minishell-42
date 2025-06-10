@@ -55,7 +55,6 @@ void	free_commands(t_command **cmds)
 		return ;
 	while (*cmds)
 	{
-		printf("b final in_fd: %d\n", (*cmds)->in_fd);
 		tmp = ((*cmds)->next);
 		if ((*cmds)->in_file)
 			free((*cmds)->in_file);
@@ -69,7 +68,6 @@ void	free_commands(t_command **cmds)
 			close((*cmds)->in_fd);
 		if ((*cmds)->out_fd != -1)
 			close((*cmds)->out_fd);
-		printf("final in_fd: %d\n", (*cmds)->in_fd);
 		free(*cmds);
 		*cmds = tmp;
 	}
