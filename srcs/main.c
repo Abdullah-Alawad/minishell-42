@@ -28,14 +28,38 @@ t_command*	create_and_parse_tokens(char *command, int *status, t_env_list *env_l
 	t_token		*tokens_list;
 	t_command	*cmds_list;
 
+	if (!good_quotes(command))
+	{
+		ft_putstr_fd("-minishll: syntax error\n", STDERR_FILENO);
+		*status = 2;
+		return (NULL);
+	}
 	tokens_list = handle_command(command, status);
 	if (!tokens_list)
 		error_tokens(&env_lst, command);
-	cmds_list = parse_tokens(tokens_list, env_lst, status);
-	if (!cmds_list)
-		error_cmd_list(&env_lst, &tokens_list, command);
-	free_tokens(&tokens_list);
-	return (cmds_list);
+	if (valid_command(tokens_list, status))
+	{
+		cmds_list = parse_tokens(tokens_list, env_lst, status);
+		if (!cmds_list)
+			error_cmd_list(&env_lst, &tokens_list, command);
+		free_tokens(&tokens_list);
+		return (cmds_list);
+	}
+	else
+		return (NULL);
+}
+
+void	execution(char *command, int *status, t_env_list *env_lst)
+{
+	t_command	*cmds_list;
+	
+	cmds_list = create_and_parse_tokens(command, status, env_lst);
+	if (cmds_list)
+	{
+		execute_command(cmds_list, status, &env_lst);
+		free_commands(&cmds_list);
+	}
+	free(command);
 }
 
 int	main(int ac, char **av, char **env)
@@ -43,7 +67,6 @@ int	main(int ac, char **av, char **env)
 	char		*command;
 	t_env_list	*env_lst;
 	static int	status;
-	t_command	*cmds_list;
 
 	env_lst = create_env_list(env);
 	if (!env_lst)
@@ -55,10 +78,9 @@ int	main(int ac, char **av, char **env)
 			error_cmd(&env_lst, ac);
 		add_history(command);
 		command = expander(command, env_lst, status, av);
-		cmds_list = create_and_parse_tokens(command, &status, env_lst);
-		execute_command(cmds_list, &status, &env_lst);
-		free_commands(&cmds_list);
-		free(command);
+		if (!command)
+			continue ;
+		execution(command, &status, env_lst);
 	}
 	return (0);
 }

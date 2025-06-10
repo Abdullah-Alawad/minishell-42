@@ -35,7 +35,7 @@ int	starting_exec(t_command *cmd_list, int *status, t_env_list **env)
 	while (tmp)
 	{
 		if (tmp->heredoc == 1)
-			open_heredocs(tmp);
+			open_heredocs(tmp, *env, status);
 		tmp = tmp->next;
 	}
 	return (1);
@@ -57,19 +57,10 @@ void	waiting(int *status)
 void	handle_child_cmd(t_command *cmd, int *status,
 		t_env_list **env, int *std)
 {	
-	if (need_redirect(cmd))
-	{	
-		std[0] = dup(STDIN_FILENO);
-		std[1] = dup(STDOUT_FILENO);
-	}
-	if (!redirect_fds(cmd))
-	{
+	(void)std;
 		if (cmd-> is_builtin)
 			*status = execute_builtin(cmd, *status, env);
 		else
 			*status = execute_external(cmd, env);
-	}
-	if (need_redirect(cmd))
-		reset_stds(std);
 	exit (*status);
 }

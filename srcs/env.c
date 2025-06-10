@@ -18,33 +18,6 @@ void	env_add_back(t_env_list **lst, t_env_list *env)
 	else
 		(env_last(*lst))->next = env;
 }
-t_env_list	*init_env(char *str, int status)
-{
-	t_env_list	*env;
-	char		*equal_sign;
-	size_t		key_len;
-
-	env = malloc(sizeof(t_env_list));
-	if (!env)
-		return (NULL);
-
-	equal_sign = ft_strchr(str, '=');
-	if (!equal_sign)
-	{
-		env->key = ft_strdup(str);
-		env->data = ft_strdup("");
-	}
-	else
-	{
-		key_len = equal_sign - str;
-		env->key = ft_substr(str, 0, key_len);
-		env->data = ft_strdup(equal_sign + 1);
-	}
-	env->exported = status;
-	env->len = ft_strlen(env->data);
-	env->next = NULL;
-	return (env);
-}
 
 t_env_list	*create_env_list(char **env)
 {
@@ -56,9 +29,13 @@ t_env_list	*create_env_list(char **env)
 	i = 0;
 	while (env[i])
 	{
+		
 		tmp = init_env(env[i], 0);
 		if (!tmp)
+		{
+			free_env_list(&env_lst);
 			return (0);
+		}
 		env_add_back(&env_lst, tmp);
 		i++;
 	}

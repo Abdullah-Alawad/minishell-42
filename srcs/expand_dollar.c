@@ -18,6 +18,8 @@ void	expand_positional_parameter(char *data, t_expand *ex)
 		return ;
 	}
 	ex->value = get_positional_value(ex->var_name, ex->args, ex->status);
+	if (ex->is_redirection_context && ex->value && contains_whitespace(ex->value))
+		ex->ambiguous_redirect = 1;
 	if (ex->value)
 		ex->result = ft_strjoin_and_free(ex->result, ex->value);
 	else
@@ -32,6 +34,8 @@ void	expand_named_variable(char *data, t_expand *ex)
 		ex->i++;
 	ex->var_name = ft_substr(data, ex->start, ex->i - ex->start);
 	ex->value = get_env_value(ex->var_name, ex->env_lst);
+	if (ex->is_redirection_context && ex->value && contains_whitespace(ex->value))
+		ex->ambiguous_redirect = 1;
 	if (ex->value)
 		ex->result = ft_strjoin_and_free(ex->result, ex->value);
 	else
@@ -47,6 +51,8 @@ void	expand_dollar_with_digits(char *data, t_expand *ex)
 	buff[1] = '\0';
 	ex->i++;
 	ex->value = get_positional_value(buff, ex->args, ex->status);
+	if (ex->is_redirection_context && ex->value && contains_whitespace(ex->value))
+		ex->ambiguous_redirect = 1;
 	if (ex->value)
 		ex->result = ft_strjoin_and_free(ex->result, ex->value);
 	else

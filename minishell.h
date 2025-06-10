@@ -10,6 +10,7 @@
 # include <readline/history.h>
 # include <sys/wait.h>
 # include <errno.h>
+# include <sys/stat.h>
 
 # define FOREVER	1
 # define GREEN		"\033[0;32m"
@@ -67,7 +68,7 @@ typedef struct s_env_list
 	struct s_env_list	*next;
 }	t_env_list;
 
-typedef struct s_expand //add by abeer
+typedef struct s_expand
 {
 	t_env_list	*env_lst;
 	char		*result;
@@ -78,6 +79,8 @@ typedef struct s_expand //add by abeer
 	int			start;
 	int			status;
 	char		**args;
+	int 		is_redirection_context;
+	int 		ambiguous_redirect;
 }	t_expand;
 
 
@@ -94,7 +97,6 @@ typedef struct s_command
 	int					append;
 	int					is_builtin;
 	int					status;
-	char				**args;
 	struct s_command	*next;
 }	t_command;
 
@@ -110,6 +112,8 @@ void		tokens_add_back(t_token **tokens_list, t_token *token);
 int			handle_combined_token(char *cmd, int i, t_token **tokens_list);
 int			is_space_or_operator(char c);
 int			is_redirect(t_ttype type);
+int			valid_command(t_token *tokens, int *status);
+int			check_tokens(t_token *tokens_list);
 
 
 // quotes functions
@@ -132,20 +136,22 @@ t_env_list	*init_env(char *str, int status);
 void		env_add_back(t_env_list **lst, t_env_list *env);
 
 // expander functions //abeer
-void	expand_braced_variable(char *data, t_expand *ex);
-void	expand_status_variable(t_expand *ex);
-void	expand_positional_parameter(char *data, t_expand *ex);
-void	expand_named_variable(char *data, t_expand *ex);
-void	handle_dollar(char *data, t_expand *ex);
-char	*ft_strjoin_and_free(char *s1, char *s2);
-char	*get_positional_value(char *num_str, char **args, int status);
-char	*get_env_value(char *var_name, t_env_list *env);
-void	append_char_to_result(char *data, t_expand *ex);
-void	handel_s_q(char *data, t_expand *ex);
-void	handel_d_q(char *data, t_expand *ex);
-void	do_expand(char *data, t_expand *ex);
-char	*expander(char *data, t_env_list *env_lst, int status, char **args);
-void	expand_dollar_with_digits(char *data, t_expand *ex);
+void		expand_braced_variable(char *data, t_expand *ex);
+void		expand_status_variable(t_expand *ex);
+void		expand_positional_parameter(char *data, t_expand *ex);
+void		expand_named_variable(char *data, t_expand *ex);
+void		handle_dollar(char *data, t_expand *ex);
+char		*ft_strjoin_and_free(char *s1, char *s2);
+char		*get_positional_value(char *num_str, char **args, int status);
+char		*get_env_value(char *var_name, t_env_list *env);
+void		append_char_to_result(char *data, t_expand *ex);
+void		handel_s_q(char *data, t_expand *ex);
+void		handel_d_q(char *data, t_expand *ex);
+void		do_expand(char *data, t_expand *ex);
+char		*expander(char *data, t_env_list *env_lst, int status, char **args);
+void		expand_dollar_with_digits(char *data, t_expand *ex);
+int 		contains_whitespace(const char *str);
+void		setup_expand(t_expand *ex, t_env_list *env, int status, char **args);
 
 // execution function
 void		execute_command(t_command *cmd_list, int *status, t_env_list **env);
@@ -163,6 +169,9 @@ int			handle_export(t_command *cmd, t_env_list **env);
 t_env_list	*init_special_env(char *str, int status);
 void		print_export(t_env_list **env);
 int			ft_strchr_i(const char *s, int c);
+int			valid_export(char *cmd);
+int			new_export(char *cmd, t_env_list **env, int exp);
+int			check_export_format(char *cmd);
 int			handle_unset(t_command *cmd, t_env_list **env);
 int			handle_cd(char **cmd, t_env_list **env);
 int			count_av(char **str);
@@ -185,10 +194,11 @@ int			handle_parent_process(int pid, char *path);
 char		*get_cmd_path(char *cmd, t_env_list **env);
 
 // redirections
-int			open_heredocs(t_command *cmd);
+int			open_heredocs(t_command *cmd, t_env_list *env, int *status);
 int			redirect_fds(t_command *cmd);
 void		reset_stds(int *std);
 int			need_redirect(t_command *cmd);
+int			write_fd_error(char *file);
 
 
 // frees functions
@@ -197,6 +207,7 @@ void		free_env_list(t_env_list **env);
 void		free_av(char **s);
 void		free_commands(t_command **cmds);
 void		error_exit(int status, t_token **tokens, t_command **cmds, t_env_list **env);
+void		exit_expand_error(char *cmd, t_env_list **env, t_expand **ex);
 
 
 

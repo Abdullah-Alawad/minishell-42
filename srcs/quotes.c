@@ -29,7 +29,6 @@ t_qtype	quote_type(char q)
 	return (NO_Q);
 }
 
-// needs to be checked and fixed more I THINK
 int	handle_quotes(char *command, int start, t_token **tokens_list)
 {
 	char	q;

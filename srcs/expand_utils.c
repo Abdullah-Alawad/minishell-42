@@ -63,4 +63,3 @@ void	expand_status_variable(t_expand *ex)
 	ex->result = ft_strjoin_and_free(ex->result, status_str);
 	free(status_str);
 }
-

@@ -54,6 +54,8 @@ void	handel_d_q(char *data, t_expand *ex)
 
 void	do_expand(char *data, t_expand *ex)
 {
+	int	j;
+
 	while (data[ex->i])
 	{
 		if (data[ex->i] == '\'')
@@ -62,6 +64,13 @@ void	do_expand(char *data, t_expand *ex)
 			handel_d_q(data, ex);
 		else if (data[ex->i] == '$')
 		{
+			j = ex->i - 1;
+			while (j >= 0 && (data[j] == ' ' || data[j] == '\t'))
+				j--;
+			if (j >= 0 && (data[j] == '>' || data[j] == '<'))
+				ex->is_redirection_context = 1;
+			else
+				ex->is_redirection_context = 0;
 			ex->i++;
 			handle_dollar(data, ex);
 		}
@@ -77,14 +86,21 @@ char	*expander(char *data, t_env_list *env_lst, int status, char **args)
 
 	ex = malloc(sizeof(t_expand));
 	if (!ex)
-		return (NULL);
-	ex->env_lst = env_lst;
-	ex->status = status;
-	ex->args = args;
+		exit_expand_error(data, &env_lst, NULL);
+	setup_expand(ex, env_lst, status, args);
 	ex->result = ft_strdup("");
-	ex->i = 0;
+	if (!ex->result)
+		exit_expand_error(data, &env_lst, &ex);
 	do_expand(data, ex);
 	final_result = ft_strdup(ex->result);
+	if (!final_result)
+		exit_expand_error(data, &env_lst, &ex);
+	if (ex->ambiguous_redirect)
+	{
+		ft_putstr_fd("minishell: ambiguous redirect\n", 2);
+		free(final_result);
+		final_result = NULL;
+	}
 	free(ex->result);
 	free(ex);
 	free(data);

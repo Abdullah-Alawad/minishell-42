@@ -1,9 +1,7 @@
 #include "../minishell.h"
 
-int	execute_builtin(t_command *cmd, int status, t_env_list **env)
+int	run_builtin(t_command *cmd, int status, t_env_list **env)
 {
-	if (!cmd || !cmd->av)
-		return (1);
 	if (ft_strncmp("echo", cmd->av[0], ft_strlen("echo")) == 0)
 		status = handle_echo(cmd->av);
 	else if (ft_strncmp("env", cmd->av[0], ft_strlen("env")) == 0)
@@ -21,30 +19,43 @@ int	execute_builtin(t_command *cmd, int status, t_env_list **env)
 	return (status);
 }
 
+int	execute_builtin(t_command *cmd, int status, t_env_list **env)
+{
+	int	std[2];
+
+	if (!cmd || !cmd->av)
+		return (1);
+	if (need_redirect(cmd))
+	{	
+		std[0] = dup(STDIN_FILENO);
+		std[1] = dup(STDOUT_FILENO);
+	}
+	if (redirect_fds(cmd))
+		status = run_builtin(cmd, status, env);
+	else
+	{
+		if (need_redirect(cmd))
+			reset_stds(std);
+		return (1);
+	}
+	if (need_redirect(cmd))
+		reset_stds(std);
+	return (status);
+}
+
 void	handle_no_pipe_cmd(t_command *cmd_list, int *status, t_env_list **env)
 {
 	t_command	*cmd;
-	int			std[2];
 
 	cmd = cmd_list;
 	if (check_found_command(cmd, status, env) != 127)
 	{	
 		if (cmd->heredoc == 1)
-			open_heredocs(cmd);
-		if (need_redirect(cmd))
-		{	
-			std[0] = dup(STDIN_FILENO);
-			std[1] = dup(STDOUT_FILENO);
-		}
-		if (!redirect_fds(cmd))
-		{
-			if (cmd-> is_builtin)
-				*status = execute_builtin(cmd, *status, env);
-			else
-				*status = execute_external(cmd, env);
-		}
-		if (need_redirect(cmd))
-			reset_stds(std);
+			open_heredocs(cmd, *env, status);
+		if (cmd->is_builtin)
+			*status = execute_builtin(cmd, *status, env);
+		else
+			*status = execute_external(cmd, env);
 	}
 }
 
@@ -75,13 +86,17 @@ void	in_parent(t_command *cmd, t_pipe *pipe)
 		close(pipe->prev_fd);
 	if (cmd->next)
 		close(pipe->pipes[1]);
-	if (cmd->in_fd > 2)
+	if (cmd->in_fd != -1)
+	{
 		close(cmd->in_fd);
+		cmd->in_fd = -1;
+	}
 	if (cmd->next)
 		pipe->prev_fd = pipe->pipes[0];
 	else
 		pipe->prev_fd = -1;
 }
+
 
 void	execute_command(t_command *cmd_list, int *status, t_env_list **env)
 {

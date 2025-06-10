@@ -4,12 +4,15 @@ int	handle_child_process(t_command *cmd, t_env_list **env, char *path)
 {
 	char	**envp;
 
+	if (!redirect_fds(cmd))
+		exit (1);
 	envp = env_list_to_array(env);
 	if (!envp)
-		return (1);
+		exit (1);
 	execve(path, cmd->av, envp);
+	free_av(envp);
 	perror("execve");
-	exit(EXIT_FAILURE);
+	exit (1);
 }
 
 int	handle_parent_process(int pid, char *path)

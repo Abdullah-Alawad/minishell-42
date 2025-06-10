@@ -64,6 +64,10 @@ void	free_commands(t_command **cmds)
 			free_av((*cmds)->av);
 		if ((*cmds)->here_arr)
 			free_av((*cmds)->here_arr);
+		if ((*cmds)->in_fd != -1)
+			close((*cmds)->in_fd);
+		if ((*cmds)->out_fd != -1)
+			close((*cmds)->out_fd);
 		free(*cmds);
 		*cmds = tmp;
 	}
