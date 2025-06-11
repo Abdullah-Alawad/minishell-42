@@ -50,7 +50,10 @@ int	handle_cd_home(char **cmd, t_env_list **env, int num, int is_tilde)
 
 	path = get_home_path(env);
 	if (!path)
+	{
+		ft_putstr_fd("-minishell: cd: HOME not set\n", STDERR_FILENO);
 		return (1);
+	}
 	if (chdir(path) != 0)
 		return (1);
 	if ((is_tilde && cmd[1][1] == '\0') || num == 1)
@@ -58,7 +61,7 @@ int	handle_cd_home(char **cmd, t_env_list **env, int num, int is_tilde)
 		update_pwd(env);
 		return (0);
 	}
-	return (-1);
+	return (1);
 }
 
 int	handle_cd(char **cmd, t_env_list **env)
@@ -72,7 +75,7 @@ int	handle_cd(char **cmd, t_env_list **env)
 	num = count_av(cmd);
 	if (num > 2)
 	{
-		perror("cd: too many arguments\n");
+		ft_putstr_fd("-minishell: cd: too many arguments\n", STDERR_FILENO);
 		return (1);
 	}
 	if (num == 2 && cmd[1][0] == '~')
@@ -80,7 +83,6 @@ int	handle_cd(char **cmd, t_env_list **env)
 	if (num == 1 || (num == 2 && is_tilde))
 	{
 		status = handle_cd_home(cmd, env, num, is_tilde);
-		if (status != -1)
 			return (status);
 	}
 	status = handle_cd_path(cmd, env, num, is_tilde);

@@ -90,9 +90,6 @@ int	handle_export(t_command *cmd, t_env_list **env)
 		if (!add_export(cmd->av, env))
 			return (0);
 		else
-		{
-			error_exit(1, NULL, &cmd, env);
-			return (1);
-		}
+			return (-1);
 	}
 }
