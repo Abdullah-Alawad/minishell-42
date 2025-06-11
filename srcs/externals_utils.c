@@ -16,6 +16,7 @@ int	add_envs(t_env_list *env, char **envp)
 		else
 		{
 			envp[i] = ft_strjoin(tmp, env->data);
+			free(tmp);
 			if (!envp[i])
 			{
 				free(tmp);

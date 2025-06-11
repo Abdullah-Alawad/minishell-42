@@ -154,7 +154,7 @@ int 		contains_whitespace(const char *str);
 void		setup_expand(t_expand *ex, t_env_list *env, int status, char **args);
 
 // execution function
-void		execute_command(t_command *cmd_list, int *status, t_env_list **env);
+int			execute_command(t_command *cmd_list, int *status, t_env_list **env);
 int			execute_builtin(t_command *cmd, int status, t_env_list **env);
 void		waiting(int *status);
 int			starting_exec(t_command *cmd_list, int *status, t_env_list **env);
@@ -189,9 +189,10 @@ int			env_len(t_env_list *env);
 char		**env_list_to_array(t_env_list **env);
 void		free_paths(char **paths);
 char		*get_env_path(t_env_list *env);
-int			handle_child_process(t_command *cmd, t_env_list **env, char *path);
-int			handle_parent_process(int pid, char *path);
+int			handle_child_process(t_command *cmd, char *path, char **envp);
+int			handle_parent_process(int pid, char *path, char **envp);
 char		*get_cmd_path(char *cmd, t_env_list **env);
+int			external_error(char *path, char **envp);
 
 // redirections
 int			open_heredocs(t_command *cmd, t_env_list *env, int *status);

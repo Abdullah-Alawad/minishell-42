@@ -98,7 +98,7 @@ void	in_parent(t_command *cmd, t_pipe *pipe)
 }
 
 
-void	execute_command(t_command *cmd_list, int *status, t_env_list **env)
+int	execute_command(t_command *cmd_list, int *status, t_env_list **env)
 {
 	t_command	*cmd;
 	t_pipe		pipe_s;
@@ -106,7 +106,7 @@ void	execute_command(t_command *cmd_list, int *status, t_env_list **env)
 	cmd = cmd_list;
 	pipe_s.prev_fd = -1;
 	if (!starting_exec(cmd_list, status, env))
-		return ;
+		return (*status);
 	while (cmd)
 	{
 		if (cmd->next && pipe(pipe_s.pipes) == -1)
@@ -119,4 +119,5 @@ void	execute_command(t_command *cmd_list, int *status, t_env_list **env)
 		cmd = cmd->next;
 	}
 	waiting(status);
+	return (*status);
 }
