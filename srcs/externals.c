@@ -17,7 +17,7 @@ char	*get_cmd_if_direct_path(char *cmd)
 char	*check_path(char *full, char *tmp, char *cmd)
 {
 	full = ft_strjoin(tmp, cmd);
-	if (!tmp)
+	if (!full)
 		return (NULL);
 	free(tmp);
 	if (access(full, X_OK) == 0)
@@ -71,25 +71,20 @@ char	*get_cmd_path(char *cmd, t_env_list **env)
 
 int	execute_external(t_command *cmd, t_env_list **env)
 {
-	int		pid;
-	int		exit_code;
 	char	*path;
+	char	**envp;
 
 	if (!cmd || !cmd->av || !cmd->av[0])
-		return (1);
+		exit (1);
 	path = get_cmd_path(cmd->av[0], env);
 	if (!path)
 	{
 		printf("%s: command not found\n", cmd->av[0]);
-		return (127);
+		exit (127);
 	}
-	pid = fork();
-	if (pid == -1)
-		return (1);
-	else if (pid == 0)
-		handle_child_process(cmd, env, path);
-	else
-		exit_code = handle_parent_process(pid, path);
-	return (exit_code);
+	envp = env_list_to_array(env);
+	if (!envp)
+		exit (external_error(path, NULL));
+	handle_external_cmd(cmd, path, envp);
+	exit (0);
 }
-

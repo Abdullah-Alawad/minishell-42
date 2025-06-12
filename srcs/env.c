@@ -29,7 +29,6 @@ t_env_list	*create_env_list(char **env)
 	i = 0;
 	while (env[i])
 	{
-		
 		tmp = init_env(env[i], 0);
 		if (!tmp)
 		{

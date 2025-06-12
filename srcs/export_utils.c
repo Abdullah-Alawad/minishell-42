@@ -61,9 +61,9 @@ int	ft_strchr_i(const char *s, int c)
 
 int	print_export_error(char *cmd)
 {
-	ft_putstr_fd("-minishell: export: `", 2);
-	ft_putstr_fd(cmd, 2);
-	ft_putstr_fd("\': not a valid identifier\n", 2);
+	ft_putstr_fd("-minishell: export: `", STDERR_FILENO);
+	ft_putstr_fd(cmd, STDERR_FILENO);
+	ft_putstr_fd("\': not a valid identifier\n", STDERR_FILENO);
 	return (0);
 }
 

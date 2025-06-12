@@ -56,11 +56,35 @@ void	waiting(int *status)
 
 void	handle_child_cmd(t_command *cmd, int *status,
 		t_env_list **env, int *std)
-{	
+{
 	(void)std;
-		if (cmd-> is_builtin)
+	if (cmd-> is_builtin)
+		*status = execute_builtin(cmd, *status, env);
+	else
+		*status = execute_external(cmd, env);
+	exit (*status);
+}
+
+void	handle_no_pipe_cmd(t_command *cmd_list, int *status, t_env_list **env)
+{
+	t_command	*cmd;
+	int			pid;
+
+	cmd = cmd_list;
+	if (check_found_command(cmd, status, env) != 127)
+	{
+		if (cmd->heredoc == 1)
+			open_heredocs(cmd, *env, status);
+		if (cmd->is_builtin)
 			*status = execute_builtin(cmd, *status, env);
 		else
-			*status = execute_external(cmd, env);
-	exit (*status);
+		{
+			pid = fork();
+			if (pid == -1)
+				error_exit(1, NULL, &cmd_list, env);
+			if (pid == 0)
+				execute_external(cmd, env);
+			waiting(status);
+		}
+	}
 }

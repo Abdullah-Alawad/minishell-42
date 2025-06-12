@@ -1,6 +1,6 @@
 #include "../minishell.h"
 
-int contains_whitespace(const char *str)
+int	contains_whitespace(const char *str)
 {
 	while (*str)
 	{

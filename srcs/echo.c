@@ -1,10 +1,10 @@
 #include "../minishell.h"
 
-int handle_echo(char **cmd)
+int	handle_echo(char **cmd)
 {
 	int	i;
 	int	new_line;
-    
+
 	new_line = 0;
 	if (ft_strncmp("-n", cmd[1], ft_strlen(cmd[1])) == 0)
 		i = 2;

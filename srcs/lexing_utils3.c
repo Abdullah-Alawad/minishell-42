@@ -67,7 +67,6 @@ char	*extract_unquoted_part(char *cmd, int *i)
 	return (part);
 }
 
-
 int	handle_combined_token(char *cmd, int i, t_token **tokens_list)
 {
 	char	*token_str;

@@ -1,10 +1,12 @@
 #include "../minishell.h"
 
-void	update_env_data(char *cmd, char *new_data, size_t start, t_env_list *tmp)
+void	update_env_data(char *cmd, char *new_data, size_t start,
+		t_env_list *tmp)
 {
 	while (tmp)
 	{
-		if (ft_strncmp(cmd, tmp->key, start) == 0 && ft_strlen(tmp->key) == start)
+		if (ft_strncmp(cmd, tmp->key, start) == 0
+			&& ft_strlen(tmp->key) == start)
 		{
 			free(tmp->data);
 			tmp->data = new_data;
@@ -90,9 +92,6 @@ int	handle_export(t_command *cmd, t_env_list **env)
 		if (!add_export(cmd->av, env))
 			return (0);
 		else
-		{
-			error_exit(1, NULL, &cmd, env);
-			return (1);
-		}
+			return (-1);
 	}
 }

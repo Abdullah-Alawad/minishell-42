@@ -79,5 +79,6 @@ void	error_exit(int status, t_token **tokens,
 	free_tokens(tokens);
 	free_env_list(env);
 	free_commands(cmds);
+	rl_clear_history();
 	exit(status);
 }
