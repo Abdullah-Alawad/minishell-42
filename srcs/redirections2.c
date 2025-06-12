@@ -33,7 +33,7 @@ int	open_heredocs(t_command *cmd, t_env_list *env, int *status)
 		{
 			line = readline("> ");
 			if (!line || ft_strcmp(line, cmd->here_arr[i]) == 0)
-				break;
+				break ;
 			write_heredoc(line, pipes[1], env, status);
 		}
 		free(line);

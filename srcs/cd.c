@@ -83,7 +83,7 @@ int	handle_cd(char **cmd, t_env_list **env)
 	if (num == 1 || (num == 2 && is_tilde))
 	{
 		status = handle_cd_home(cmd, env, num, is_tilde);
-			return (status);
+		return (status);
 	}
 	status = handle_cd_path(cmd, env, num, is_tilde);
 	return (status);

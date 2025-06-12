@@ -46,7 +46,7 @@ int	set_here_arr(t_command *cmd, char *del)
 	if (!new_here)
 		return (0);
 	if (!copy_here(cmd, new_here, &i))
-		return(0);
+		return (0);
 	new_here[i] = ft_strdup(del);
 	if (!new_here[i])
 	{
@@ -65,7 +65,7 @@ int	set_write_operator(t_command *cmd, t_token *tokens)
 	cmd->out_file = ft_strdup(tokens->next->data);
 	if (!cmd->out_file)
 		return (0);
-	if (tokens->type == T_APPEND)	
+	if (tokens->type == T_APPEND)
 		cmd->append = 2;
 	else
 		cmd->append = 1;

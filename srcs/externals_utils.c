@@ -1,9 +1,8 @@
 #include "../minishell.h"
 
-int	add_envs(t_env_list *env, char **envp)
+int	add_envs(t_env_list *env, char **envp, char *tmp)
 {
 	int		i;
-	char	*tmp;
 
 	i = 0;
 	while (env)
@@ -16,12 +15,12 @@ int	add_envs(t_env_list *env, char **envp)
 		else
 		{
 			envp[i] = ft_strjoin(tmp, env->data);
-			free(tmp);
 			if (!envp[i])
 			{
 				free(tmp);
 				return (1);
 			}
+			free(tmp);
 		}
 		i++;
 		env = env->next;
@@ -47,12 +46,14 @@ char	**env_list_to_array(t_env_list **env)
 {
 	int		envp_len;
 	char	**envp;
+	char	*tmp;
 
+	tmp = NULL;
 	envp_len = env_len(*env);
 	envp = malloc(sizeof(char *) * (envp_len + 1));
 	if (!envp)
 		return (NULL);
-	if (add_envs(*env, envp))
+	if (add_envs(*env, envp, tmp))
 		return (NULL);
 	return (envp);
 }

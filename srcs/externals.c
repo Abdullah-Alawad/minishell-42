@@ -71,29 +71,20 @@ char	*get_cmd_path(char *cmd, t_env_list **env)
 
 int	execute_external(t_command *cmd, t_env_list **env)
 {
-	int		pid;
-	int		exit_code;
 	char	*path;
 	char	**envp;
 
 	if (!cmd || !cmd->av || !cmd->av[0])
-		return (1);
+		exit (1);
 	path = get_cmd_path(cmd->av[0], env);
 	if (!path)
 	{
 		printf("%s: command not found\n", cmd->av[0]);
-		return (127);
+		exit (127);
 	}
 	envp = env_list_to_array(env);
 	if (!envp)
-		return (external_error(path, NULL));
-	pid = fork();
-	if (pid == -1)
-		return (external_error(path, NULL));
-	else if (pid == 0)
-		handle_child_process(cmd, path, envp);
-	else
-		exit_code = handle_parent_process(pid, path, envp);
-	return (exit_code);
+		exit (external_error(path, NULL));
+	handle_external_cmd(cmd, path, envp);
+	exit (0);
 }
-

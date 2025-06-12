@@ -2,7 +2,6 @@
 
 void	fill_cmd(t_command *cmd)
 {
-
 	cmd->here_arr[0] = NULL;
 	cmd->in_file = NULL;
 	cmd->out_file = NULL;
@@ -24,7 +23,7 @@ t_command	*cmd_create(int status)
 	cmd->next = NULL;
 	cmd->av = malloc(sizeof(char *) * 1);
 	if (!cmd->av)
-	{	
+	{
 		free(cmd);
 		return (NULL);
 	}
@@ -33,7 +32,7 @@ t_command	*cmd_create(int status)
 	if (!cmd->here_arr)
 	{
 		free_commands(&cmd);
-		return(NULL);
+		return (NULL);
 	}
 	fill_cmd(cmd);
 	cmd->status = status;

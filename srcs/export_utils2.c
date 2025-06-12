@@ -27,9 +27,9 @@ int	new_export(char *cmd, t_env_list **env, int exp)
 	while (tmp)
 	{
 		if ((exp == 2 && ft_strcmp(cmd, tmp->key) == 0)
-		|| (exp != 2 && ft_strncmp(cmd, tmp->key, len) == 0 
-			&& ft_strlen(tmp->key) == len))
-		return (0);
+			|| (exp != 2 && ft_strncmp(cmd, tmp->key, len) == 0
+				&& ft_strlen(tmp->key) == len))
+			return (0);
 		tmp = tmp->next;
 	}
 	return (1);

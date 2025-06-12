@@ -56,8 +56,8 @@ int	check_tokens(t_token *tokens_list)
 	{
 		if (tokens_list->type == T_PIPE)
 		{
-			if (!tokens_list->next || (tokens_list->next->type != T_DATA &&
-				!is_redirect(tokens_list->next->type)))
+			if (!tokens_list->next || (tokens_list->next->type != T_DATA
+					&& !is_redirect(tokens_list->next->type)))
 				return (0);
 		}
 		if (is_redirect(tokens_list->type))
@@ -83,4 +83,3 @@ t_token	*handle_command(char *command, int *status)
 	}
 	return (tokens_list);
 }
-

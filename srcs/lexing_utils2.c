@@ -47,7 +47,7 @@ void	cmds_add_back(t_command **cmds_list, t_command *cmd)
 }
 
 int	is_redirect(t_ttype type)
-{	
+{
 	if (type == T_REDIRECT_IN || type == T_REDIRECT_OUT
 		|| type == T_APPEND || type == T_HEREDOC)
 		return (1);
