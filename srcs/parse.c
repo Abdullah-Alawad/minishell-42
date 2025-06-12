@@ -37,7 +37,7 @@ int	check_builtin(char *s)
 	while (b_ins[i])
 	{
 		len = ft_strlen(s);
-		if (!ft_strncmp(s, b_ins[i], len))
+		if (!ft_strcmp(s, b_ins[i]))
 			return (1);
 		i++;
 	}
