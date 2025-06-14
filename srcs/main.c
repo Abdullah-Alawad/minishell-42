@@ -34,17 +34,16 @@ void	execution(char *command, int *status, t_env_list *env_lst)
 	cmds_list = create_and_parse_tokens(command, status, env_lst);
 	if (cmds_list)
 	{
+		free(command);
 		if (execute_command(cmds_list, status, &env_lst) == -1)
 		{
 			free_commands(&cmds_list);
 			free_env_list(&env_lst);
-			free(command);
 			rl_clear_history();
 			exit (1);
 		}
 		free_commands(&cmds_list);
 	}
-	free(command);
 }
 
 int	main(int ac, char **av, char **env)
