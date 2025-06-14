@@ -26,7 +26,6 @@ int	set_operator(t_command *cmd, t_token *tokens)
 
 int	check_builtin(char *s)
 {
-	int			len;
 	int			i;
 	static char	*b_ins[] = {"echo", "cd", "pwd", "export",
 		"unset", "env", "exit", NULL};
@@ -36,7 +35,6 @@ int	check_builtin(char *s)
 	i = 0;
 	while (b_ins[i])
 	{
-		len = ft_strlen(s);
 		if (!ft_strcmp(s, b_ins[i]))
 			return (1);
 		i++;

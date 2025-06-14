@@ -35,8 +35,11 @@ int	starting_exec(t_command *cmd_list, int *status, t_env_list **env)
 	while (tmp)
 	{
 		if (tmp->heredoc == 1)
-			open_heredocs(tmp, *env, status);
-		tmp = tmp->next;
+		{
+			if (open_heredocs(tmp, *env, status))
+				error_exit(1, NULL, &cmd_list, env);
+		}
+			tmp = tmp->next;
 	}
 	return (1);
 }
@@ -74,7 +77,10 @@ void	handle_no_pipe_cmd(t_command *cmd_list, int *status, t_env_list **env)
 	if (check_found_command(cmd, status, env) != 127)
 	{
 		if (cmd->heredoc == 1)
-			open_heredocs(cmd, *env, status);
+		{
+			if (open_heredocs(cmd, *env, status))
+				error_exit(1, NULL, &cmd_list, env);
+		}
 		if (cmd->is_builtin)
 			*status = execute_builtin(cmd, *status, env);
 		else

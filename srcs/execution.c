@@ -85,11 +85,9 @@ void	in_parent(t_command *cmd, t_pipe *pipe)
 int	execute_command(t_command *cmd_list, int *status, t_env_list **env)
 {
 	t_command	*cmd;
-	t_command	*prev_cmd;
 	t_pipe		pipe_s;
 
 	cmd = cmd_list;
-	prev_cmd = NULL;
 	pipe_s.prev_fd = -1;
 	if (!starting_exec(cmd_list, status, env))
 		return (*status);
