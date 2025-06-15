@@ -11,6 +11,7 @@
 # include <sys/wait.h>
 # include <errno.h>
 # include <sys/stat.h>
+# include <signal.h>
 
 # define FOREVER	1
 # define GREEN		"\033[0;32m"
@@ -20,14 +21,16 @@
 # define AQUA		"\033[0;36m"
 # define RESET		"\033[0m"
 
+extern volatile sig_atomic_t	g_s;
+
 typedef enum e_ttype
 {
 	T_DATA,
 	T_PIPE,
-	T_REDIRECT_IN,  // <
-	T_REDIRECT_OUT, // >
-	T_APPEND,		// >>
-	T_HEREDOC,		// <<
+	T_REDIRECT_IN,
+	T_REDIRECT_OUT,
+	T_APPEND,
+	T_HEREDOC,
 }	t_ttype;
 
 typedef enum e_qtype
@@ -37,19 +40,18 @@ typedef enum e_qtype
 	DOUBLE_Q,
 }	t_qtype;
 
-typedef struct	s_ints
+typedef struct s_ints
 {
 	int	start;
 	int	end;
 }	t_ints;
 
-typedef struct	s_pipe
+typedef struct s_pipe
 {
 	int		pipes[2];
 	int		prev_fd;
 	pid_t	pid;
 }	t_pipe;
-
 
 typedef struct s_token
 {
@@ -79,10 +81,9 @@ typedef struct s_expand
 	int			start;
 	int			status;
 	char		**args;
-	int 		is_redirection_context;
-	int 		ambiguous_redirect;
+	int			is_redirection_context;
+	int			ambiguous_redirect;
 }	t_expand;
-
 
 typedef struct s_command
 {
@@ -102,7 +103,8 @@ typedef struct s_command
 
 // lexer functions
 t_token		*handle_command(char *command, int *status);
-int			add_to_list(char *command, t_ints ints, t_token **tokens_list, t_qtype q_type);
+int			add_to_list(char *command, t_ints ints, t_token **tokens_list,
+				t_qtype q_type);
 int			handle_token(char *command, int *i, t_token **tokens_list);
 int			is_operator(char c);
 int			check_operator(char *command, int start, t_token **tokens_list);
@@ -114,7 +116,6 @@ int			is_space_or_operator(char c);
 int			is_redirect(t_ttype type);
 int			valid_command(t_token *tokens, int *status);
 int			check_tokens(t_token *tokens_list);
-
 
 // quotes functions
 int			good_quotes(char *command);
@@ -128,7 +129,6 @@ void		cmds_add_back(t_command **cmds_list, t_command *cmd);
 int			copy_av(t_command *cmd, char **new_av, int *i);
 int			set_here_arr(t_command *cmd, char *del);
 int			set_write_operator(t_command *cmd, t_token *tokens);
-
 
 // env functions
 t_env_list	*create_env_list(char **env);
@@ -150,18 +150,20 @@ void		handel_d_q(char *data, t_expand *ex);
 void		do_expand(char *data, t_expand *ex);
 char		*expander(char *data, t_env_list *env_lst, int status, char **args);
 void		expand_dollar_with_digits(char *data, t_expand *ex);
-int 		contains_whitespace(const char *str);
-void		setup_expand(t_expand *ex, t_env_list *env, int status, char **args);
+int			contains_whitespace(const char *str);
+void		setup_expand(t_expand *ex, t_env_list *env,
+				int status, char **args);
 
 // execution function
 int			execute_command(t_command *cmd_list, int *status, t_env_list **env);
 int			execute_builtin(t_command *cmd, int status, t_env_list **env);
 void		waiting(int *status);
 int			starting_exec(t_command *cmd_list, int *status, t_env_list **env);
-void		handle_no_pipe_cmd(t_command *cmd_list, int *status, t_env_list **env);
+void		handle_no_pipe_cmd(t_command *cmd_list,
+				int *status, t_env_list **env);
 int			check_found_command(t_command *cmd, int *status, t_env_list **env);
-void		handle_child_cmd(t_command *cmd, int *status, t_env_list **env, int *std);
-
+void		handle_child_cmd(t_command *cmd, int *status,
+				t_env_list **env, int *std);
 
 // builtin commands functions
 int			handle_env(t_env_list **env);
@@ -179,7 +181,7 @@ char		*get_home_path(t_env_list **env);
 int			handle_exit(t_env_list **env, t_command **cmd, int status);
 void		update_pwd_data(t_env_list *pwd, t_env_list *old_pwd);
 void		handle_oldpwd(t_env_list **env, t_env_list **old_pwd);
-int 		handle_echo(char **cmd);
+int			handle_echo(char **cmd);
 int			handle_pwd(void);
 
 // external commands
@@ -189,7 +191,8 @@ int			env_len(t_env_list *env);
 char		**env_list_to_array(t_env_list **env);
 void		free_paths(char **paths);
 char		*get_env_path(t_env_list *env);
-int			handle_external_cmd(t_command *cmd, char *path, char **envp);
+int			handle_external_cmd(t_command *cmd, char *path,
+				char **envp, t_env_list **env);
 char		*get_cmd_path(char *cmd, t_env_list **env);
 int			external_error(char *path, char **envp);
 
@@ -200,16 +203,22 @@ void		reset_stds(int *std);
 int			need_redirect(t_command *cmd);
 int			write_fd_error(char *file);
 
-
 // frees functions
 void		free_tokens(t_token **tokens_list);
 void		free_env_list(t_env_list **env);
 void		free_av(char **s);
 void		free_commands(t_command **cmds);
-void		error_exit(int status, t_token **tokens, t_command **cmds, t_env_list **env);
+void		error_exit(int status, t_token **tokens,
+				t_command **cmds, t_env_list **env);
 void		exit_expand_error(char *cmd, t_env_list **env, t_expand **ex);
 void		error_cmd(t_env_list **env, int ac);
 void		error_tokens(t_env_list **env, char *command);
 void		error_cmd_list(t_env_list **env, t_token **tokens, char *command);
+
+//signals
+void		setup_signals(void);
+void		handle_sigint(int sig);
+void		handle_sigquit(int sig);
+void		ctrl_d(t_env_list **env, int status, int ac);
 
 #endif

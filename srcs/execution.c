@@ -48,6 +48,7 @@ void	handle_child(t_command *cmd, int *status,
 {
 	int	std[2];
 
+	signal(SIGQUIT, SIG_DFL);
 	if (pipe->prev_fd != -1)
 		dup2(pipe->prev_fd, STDIN_FILENO);
 	if (cmd->next)
