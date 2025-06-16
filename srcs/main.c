@@ -54,12 +54,6 @@ void	continue_command(char *cmd)
 		free(cmd);
 }
 
-void	update_status(int *status)
-{
-	*status = 130;
-	g_s = 0;
-}
-
 int	main(int ac, char **av, char **env)
 {
 	char		*command;
@@ -76,7 +70,7 @@ int	main(int ac, char **av, char **env)
 		if (!command)
 			ctrl_d(&env_lst, status, ac);
 		if (g_s)
-			update_status(&status);
+			status_update(&status);
 		add_history(command);
 		command = expander(command, env_lst, status, av);
 		if (!command || !command[0])

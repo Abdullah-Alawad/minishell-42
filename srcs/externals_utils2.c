@@ -13,7 +13,10 @@ int	handle_external_cmd(t_command *cmd, char *path,
 	free_av(envp);
 	free(path);
 	perror("execve");
-	error_exit(1, NULL, &cmd, env);
+	if (errno == EACCES)
+		error_exit(126, NULL, &cmd, env);
+	else
+		error_exit(1, NULL, &cmd, env);
 	exit (1);
 }
 

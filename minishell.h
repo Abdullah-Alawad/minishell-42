@@ -220,5 +220,6 @@ void		setup_signals(void);
 void		handle_sigint(int sig);
 void		handle_sigquit(int sig);
 void		ctrl_d(t_env_list **env, int status, int ac);
+void		status_update(int *status);
 
 #endif
