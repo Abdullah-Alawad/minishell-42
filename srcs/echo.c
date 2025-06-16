@@ -1,17 +1,32 @@
 #include "../minishell.h"
 
+int	check_flag(char *arg)
+{
+	int	i;
+
+	i = 1;
+	if (!arg || arg[0] != '-')
+		return (0);
+	while (arg[i])
+	{
+		if (arg[i] != 'n')
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
 int	handle_echo(char **cmd)
 {
 	int	i;
 	int	new_line;
 
-	new_line = 0;
-	if (ft_strncmp("-n", cmd[1], ft_strlen(cmd[1])) == 0)
-		i = 2;
-	else
+	new_line = 1;
+	i = 1;
+	while (cmd[i] && check_flag(cmd[i]))
 	{
-		new_line = 1;
-		i = 1;
+		new_line = 0;
+		i++;
 	}
 	while (cmd[i])
 	{

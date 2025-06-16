@@ -11,7 +11,7 @@ int	check_found_command(t_command *cmd, int *status, t_env_list **env)
 		path = get_cmd_path(cmd->av[0], env);
 		if (!path)
 		{
-			printf("%s: command not found\n", cmd->av[0]);
+			printf("-minishell: %s: command not found\n", cmd->av[0]);
 			*status = 127;
 			return (127);
 		}
@@ -39,7 +39,7 @@ int	starting_exec(t_command *cmd_list, int *status, t_env_list **env)
 			if (open_heredocs(tmp, *env, status))
 				error_exit(1, NULL, &cmd_list, env);
 		}
-			tmp = tmp->next;
+		tmp = tmp->next;
 	}
 	return (1);
 }
