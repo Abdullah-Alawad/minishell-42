@@ -8,6 +8,8 @@ int	check_found_command(t_command *cmd, int *status, t_env_list **env)
 		return (1);
 	else
 	{
+		if (!cmd->av[0])
+			return (1);
 		path = get_cmd_path(cmd->av[0], env);
 		if (!path)
 		{

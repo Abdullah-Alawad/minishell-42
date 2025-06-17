@@ -75,7 +75,11 @@ int	execute_external(t_command *cmd, t_env_list **env)
 	char	**envp;
 
 	if (!cmd || !cmd->av || !cmd->av[0])
-		exit (1);
+	{
+		free_commands(&cmd);
+		free_env_list(env);
+		exit (0);
+	}
 	path = get_cmd_path(cmd->av[0], env);
 	if (!path)
 	{

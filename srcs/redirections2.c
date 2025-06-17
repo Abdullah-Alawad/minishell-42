@@ -20,29 +20,29 @@ void	write_heredoc(char *line, int fd, t_env_list *env, int *status)
 
 int	open_heredocs(t_command *cmd, t_env_list *env, int *status)
 {
-	int		pipes[2];
-	char	*line;
-	int		i;
+	t_heredoc	heredoc;
 
-	i = 0;
-	while (cmd->here_arr && cmd->here_arr[i])
+	heredoc.i = 0;
+	while (cmd->here_arr && cmd->here_arr[heredoc.i])
 	{
-		if (pipe(pipes) == -1)
+		if (pipe(heredoc.pipes) == -1)
 			return (1);
 		while (1)
 		{
-			line = readline("> ");
-			if (!line || ft_strcmp(line, cmd->here_arr[i]) == 0)
+			heredoc.line = readline("> ");
+			if (!heredoc.line)
+				return (1);
+			if (ft_strcmp(heredoc.line, cmd->here_arr[heredoc.i]) == 0)
 				break ;
-			write_heredoc(line, pipes[1], env, status);
+			write_heredoc(heredoc.line, heredoc.pipes[1], env, status);
 		}
-		free(line);
-		close(pipes[1]);
-		if (cmd->here_arr[i + 1] == NULL)
-			cmd->in_fd = pipes[0];
+		free(heredoc.line);
+		close(heredoc.pipes[1]);
+		if (cmd->here_arr[heredoc.i + 1] == NULL)
+			cmd->in_fd = heredoc.pipes[0];
 		else
-			close(pipes[0]);
-		i++;
+			close(heredoc.pipes[0]);
+		heredoc.i++;
 	}
 	return (0);
 }
