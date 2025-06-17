@@ -53,6 +53,13 @@ typedef struct s_pipe
 	pid_t	pid;
 }	t_pipe;
 
+typedef struct s_heredoc
+{
+	int		pipes[2];
+	char	*line;
+	int		i;
+}	t_heredoc;
+
 typedef struct s_token
 {
 	char			*data;
