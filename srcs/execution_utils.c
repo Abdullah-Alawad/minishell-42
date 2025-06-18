@@ -74,10 +74,9 @@ void	waiting(int *status)
 	}
 }
 
-void	handle_child_cmd(t_command *cmd, int *status,
-		t_env_list **env)
+void	handle_child_cmd(t_command *cmd, int *status, t_env_list **env)
 {
-	if (cmd-> is_builtin)
+	if (cmd->is_builtin)
 		*status = execute_builtin(cmd, *status, env);
 	else
 		*status = execute_external(cmd, env);

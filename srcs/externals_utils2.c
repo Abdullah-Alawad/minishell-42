@@ -12,6 +12,16 @@
 
 #include "../minishell.h"
 
+void	close_heredoc(t_command *cmd)
+{
+	while (cmd->next)
+	{
+		if (cmd->next->heredoc)
+			close(cmd->next->in_fd);
+		cmd = cmd->next;
+	}
+}
+
 int	handle_external_cmd(t_command *cmd, char *path,
 	char **envp, t_env_list **env)
 {
@@ -21,6 +31,7 @@ int	handle_external_cmd(t_command *cmd, char *path,
 		free(path);
 		error_exit(1, NULL, &cmd, env);
 	}
+	close_heredoc(cmd);
 	execve(path, cmd->av, envp);
 	free_av(envp);
 	free(path);

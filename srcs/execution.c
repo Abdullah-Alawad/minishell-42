@@ -103,6 +103,14 @@ int	execute_command(t_command *cmd_list, int *status, t_env_list **env)
 	pipe_s.prev_fd = -1;
 	if (!starting_exec(cmd_list, status, env))
 		return (*status);
+	t_command *cmds = cmd_list;
+	int i = 0;
+	while (cmds)
+	{
+		printf("in fd[%d]: %d\n", i, cmds->in_fd);
+		cmds = cmds->next;
+		i++;
+	}
 	while (cmd)
 	{
 		if (cmd->next && pipe(pipe_s.pipes) == -1)
