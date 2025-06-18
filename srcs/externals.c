@@ -98,6 +98,7 @@ int	execute_external(t_command *cmd, t_env_list **env)
 		printf("-minishell: %s: command not found\n", cmd->av[0]);
 		exit (127);
 	}
+	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
 	envp = env_list_to_array(env);
 	if (!envp)

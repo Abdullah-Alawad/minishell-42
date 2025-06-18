@@ -66,6 +66,7 @@ void	continue_command(char *cmd)
 		free(cmd);
 }
 
+
 int	main(int ac, char **av, char **env)
 {
 	char		*command;
@@ -75,15 +76,16 @@ int	main(int ac, char **av, char **env)
 	env_lst = create_env_list(env);
 	if (!env_lst)
 		return (1);
-	setup_signals();
 	while (FOREVER)
 	{
+		setup_signals();
 		command = readline(GREEN"minishell42"RESET"$ ");
 		if (!command)
 			ctrl_d(&env_lst, status, ac);
 		if (g_s)
 			status_update(&status);
-		add_history(command);
+		if (ft_strlen(command))
+			add_history(command);
 		command = expander(command, env_lst, status, av);
 		if (!command || !command[0])
 		{

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aalawad <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: aal-joul <aal-joul@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 16:20:38 by aalawad           #+#    #+#             */
-/*   Updated: 2025/06/17 16:20:41 by aalawad          ###   ########.fr       */
+/*   Updated: 2025/06/18 14:25:27 by aal-joul         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ void	handle_child(t_command *cmd, int *status,
 {
 	int	std[2];
 
+	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
 	if (pipe->prev_fd != -1)
 		dup2(pipe->prev_fd, STDIN_FILENO);

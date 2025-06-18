@@ -62,6 +62,7 @@ void	waiting(int *status)
 {
 	int	wstatus;
 
+	signal(SIGINT, SIG_IGN);
 	while (wait(&wstatus) != -1 || errno != ECHILD)
 	{
 		if (WIFEXITED(wstatus))
