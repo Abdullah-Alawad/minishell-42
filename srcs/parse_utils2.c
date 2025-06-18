@@ -11,6 +11,7 @@ void	fill_cmd(t_command *cmd)
 	cmd->heredoc = 0;
 	cmd->append = 0;
 	cmd->is_builtin = 0;
+	cmd->redirect_in_type = -1;
 }
 
 t_command	*cmd_create(int status)

@@ -117,6 +117,7 @@ typedef struct s_command
 	int					append;
 	int					is_builtin;
 	int					status;
+	int					redirect_in_type;
 	struct s_command	*next;
 }	t_command;
 
@@ -181,8 +182,7 @@ int			starting_exec(t_command *cmd_list, int *status, t_env_list **env);
 void		handle_no_pipe_cmd(t_command *cmd_list,
 				int *status, t_env_list **env);
 int			check_found_command(t_command *cmd, int *status, t_env_list **env);
-void		handle_child_cmd(t_command *cmd, int *status,
-				t_env_list **env, int *std);
+void		handle_child_cmd(t_command *cmd, int *status, t_env_list **env);
 
 // builtin commands functions
 int			handle_env(t_env_list **env);
@@ -233,6 +233,7 @@ void		exit_expand_error(char *cmd, t_env_list **env, t_expand **ex);
 void		error_cmd(t_env_list **env, int ac);
 void		error_tokens(t_env_list **env, char *command);
 void		error_cmd_list(t_env_list **env, t_token **tokens, char *command);
+int			spaces_only(char *cmd);
 
 //signals
 void		setup_signals(void);

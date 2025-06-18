@@ -53,3 +53,17 @@ void	error_cmd_list(t_env_list **env, t_token **tokens, char *command)
 	rl_clear_history();
 	exit(1);
 }
+
+int	spaces_only(char *cmd)
+{
+	int	i;
+
+	i = 0;
+	while (cmd[i])
+	{
+		if (cmd[i] != ' ')
+			return (0);
+		i++;
+	}
+	return (1);
+}

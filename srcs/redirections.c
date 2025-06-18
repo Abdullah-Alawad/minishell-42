@@ -31,7 +31,7 @@ int	handle_input_redirect(t_command *cmd)
 	struct stat	fs;
 
 	file = cmd->in_file;
-	if (cmd->heredoc == 0 && cmd->in_file)
+	if (cmd->in_file)
 	{
 		fd = open(cmd->in_file, O_RDONLY);
 		if (fd < 0)
@@ -72,10 +72,16 @@ int	handle_output_redirect(t_command *cmd)
 
 int	redirect_fds(t_command *cmd)
 {
-	if (handle_heredoc_redirect(cmd))
-		return (0);
-	if (handle_input_redirect(cmd))
-		return (0);
+	if (cmd->redirect_in_type == 1)
+	{
+		if (handle_input_redirect(cmd))
+			return (0);
+	}
+	if (cmd->redirect_in_type == 2)
+	{
+		if (handle_heredoc_redirect(cmd))
+			return (0);
+	}
 	if (handle_output_redirect(cmd))
 		return (0);
 	return (1);

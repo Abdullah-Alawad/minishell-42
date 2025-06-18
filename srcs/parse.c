@@ -9,12 +9,14 @@ int	set_operator(t_command *cmd, t_token *tokens)
 		cmd->in_file = ft_strdup(tokens->next->data);
 		if (!cmd->in_file)
 			return (0);
+		cmd->redirect_in_type = 1;
 	}
 	else if (tokens->type == T_HEREDOC)
 	{
 		if (!set_here_arr(cmd, tokens->next->data))
 			return (0);
 		cmd->heredoc = 1;
+		cmd->redirect_in_type = 2;
 	}
 	else if (tokens->type == T_REDIRECT_OUT || tokens->type == T_APPEND)
 	{
