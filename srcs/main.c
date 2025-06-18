@@ -54,6 +54,7 @@ void	execution(char *command, int *status, t_env_list *env_lst)
 			rl_clear_history();
 			exit (1);
 		}
+		signal(SIGINT, handle_sigint);
 		free_commands(&cmds_list);
 	}
 	else
@@ -83,9 +84,10 @@ int	main(int ac, char **av, char **env)
 			ctrl_d(&env_lst, status, ac);
 		if (g_s)
 			status_update(&status);
-		add_history(command);
+		if (ft_strlen(command))
+			add_history(command);
 		command = expander(command, env_lst, status, av);
-		if (!command || !command[0])
+		if (!command || !command[0] || spaces_only(command))
 		{
 			continue_command(command);
 			continue ;

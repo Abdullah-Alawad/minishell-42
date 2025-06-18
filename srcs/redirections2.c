@@ -50,7 +50,7 @@ int	open_heredocs(t_command *cmd, t_env_list *env, int *status)
 		}
 		free(heredoc.line);
 		close(heredoc.pipes[1]);
-		if (cmd->here_arr[heredoc.i + 1] == NULL)
+		if (cmd->here_arr[heredoc.i + 1] == NULL && cmd->redirect_in_type == 2)
 			cmd->in_fd = heredoc.pipes[0];
 		else
 			close(heredoc.pipes[0]);

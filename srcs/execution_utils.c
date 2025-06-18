@@ -25,7 +25,9 @@ int	check_found_command(t_command *cmd, int *status, t_env_list **env)
 		path = get_cmd_path(cmd->av[0], env);
 		if (!path)
 		{
-			printf("-minishell: %s: command not found\n", cmd->av[0]);
+			ft_putstr_fd("-minishell: ", STDERR_FILENO);
+			ft_putstr_fd(cmd->av[0], STDERR_FILENO);
+			ft_putstr_fd(": command not found\n", STDERR_FILENO);
 			*status = 127;
 			return (127);
 		}
@@ -62,6 +64,7 @@ void	waiting(int *status)
 {
 	int	wstatus;
 
+	signal(SIGINT, SIG_IGN);
 	while (wait(&wstatus) != -1 || errno != ECHILD)
 	{
 		if (WIFEXITED(wstatus))
@@ -72,9 +75,8 @@ void	waiting(int *status)
 }
 
 void	handle_child_cmd(t_command *cmd, int *status,
-		t_env_list **env, int *std)
+		t_env_list **env)
 {
-	(void)std;
 	if (cmd-> is_builtin)
 		*status = execute_builtin(cmd, *status, env);
 	else

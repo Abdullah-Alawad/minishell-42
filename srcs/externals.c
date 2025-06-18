@@ -95,9 +95,12 @@ int	execute_external(t_command *cmd, t_env_list **env)
 	path = get_cmd_path(cmd->av[0], env);
 	if (!path)
 	{
-		printf("-minishell: %s: command not found\n", cmd->av[0]);
+		ft_putstr_fd("-minishell: ", STDERR_FILENO);
+		ft_putstr_fd(cmd->av[0], STDERR_FILENO);
+		ft_putstr_fd(": command not found\n", STDERR_FILENO);
 		exit (127);
 	}
+	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
 	envp = env_list_to_array(env);
 	if (!envp)
