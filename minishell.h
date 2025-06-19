@@ -155,7 +155,7 @@ t_env_list	*create_env_list(char **env);
 t_env_list	*init_env(char *str, int status);
 void		env_add_back(t_env_list **lst, t_env_list *env);
 
-// expander functions //abeer
+// expander functions
 void		expand_braced_variable(char *data, t_expand *ex);
 void		expand_status_variable(t_expand *ex);
 void		expand_positional_parameter(char *data, t_expand *ex);
@@ -172,6 +172,9 @@ char		*expander(char *data, t_env_list *env_lst, int status, char **args);
 void		expand_dollar_with_digits(char *data, t_expand *ex);
 int			contains_whitespace(const char *str);
 void		setup_expand(t_expand *ex, t_env_list *env,
+				int status, char **args);
+void		do_expand_heredoc(char *data, t_expand *ex);
+char		*heredoc_expander(char *data, t_env_list *env_lst,
 				int status, char **args);
 
 // execution function

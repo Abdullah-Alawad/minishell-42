@@ -28,7 +28,8 @@ SRCS = ${SRC_DIR}/main.c ${SRC_DIR}/lexer.c ${SRC_DIR}/lexing_utils.c ${SRC_DIR}
 		${SRC_DIR}/echo.c ${SRC_DIR}/externals.c ${SRC_DIR}/externals_utils.c ${SRC_DIR}/externals_utils2.c \
 		${SRC_DIR}/lexing_utils3.c ${SRC_DIR}/redirections.c ${SRC_DIR}/redirections2.c ${SRC_DIR}/pwd.c \
 		${SRC_DIR}/execution_utils.c ${SRC_DIR}/lexing_utils4.c ${SRC_DIR}/env_utils.c ${SRC_DIR}/parse_utils2.c \
-		${SRC_DIR}/export_utils2.c ${SRC_DIR}/frees2.c ${SRC_DIR}/expand_utils2.c ${SRC_DIR}/signals.c
+		${SRC_DIR}/export_utils2.c ${SRC_DIR}/frees2.c ${SRC_DIR}/expand_utils2.c ${SRC_DIR}/signals.c \
+		${SRC_DIR}/heredoc_expander.c
 
 OBJS = ${SRCS:${SRC_DIR}/%.c=${OBJ_DIR}/%.o}
 

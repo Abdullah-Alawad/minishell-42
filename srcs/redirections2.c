@@ -16,7 +16,7 @@ char	*expand_line(char *line, t_env_list *env, int status)
 {
 	char	*result;
 
-	result = expander(line, env, status, NULL);
+	result = heredoc_expander(line, env, status, NULL);
 	if (!result)
 		return (NULL);
 	return (result);
